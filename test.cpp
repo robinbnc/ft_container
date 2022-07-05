@@ -8,7 +8,10 @@
 #include "containers_test/srcs/base.hpp"
 #include "stack.hpp"
 #include <stack>
+#include <map>
 #include "pair.hpp"
+#include "tree.hpp"
+
 
 #ifndef NAME_SPACE
 	#define NAME_SPACE_STR "STD"
@@ -33,37 +36,33 @@ void	cmp(const T_STACK &lhs, const T_STACK &rhs)
 	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
 }
 
+
 int		main(void)
 {
-	ft::pair<std::string, int>	test("hello", 1);
+	map<char, int>	test;
+	ft::Rb_tree<char, ft::pair<char, int>, std::less<ft::pair<char, int> > > test2;
 
-	std::cout << test.second << std::endl;
-	// ctnr.push_back(21);
-	// ctnr.push_back(42);
-	// ctnr.push_back(1337);
-	// ctnr.push_back(19);
-	// ctnr.push_back(19);
-	// ctnr.push_back(0);
-	// ctnr.push_back(183792);
-	stack<int>	 stck;
-	// t_stack_	stck2(ctnr);
+	// test['a'] = 2;
 
-	// cmp(stck, stck);  // 0
-	// cmp(stck, stck2); // 1
-	// stck2.push(61);
-	// stck2.push(62);
 
-	// cmp(stck, stck2); // 2
-	// cmp(stck2, stck); // 3
+	test.insert(std::pair<char, int>('c', 6));
+	test.insert(std::pair<char, int>('d', 2));
+	test.insert(std::pair<char, int>('e', 3));
+	test.insert(std::pair<char, int>('f', 4));
+	test.insert(std::pair<char, int>('g', 5));
 
-	// stck.push(42);
 
-	// cmp(stck, stck2); // 4
-	// cmp(stck2, stck); // 5
+	test2.insert(ft::pair<char, int>('c', 1));
+	test2.insert(ft::pair<char, int>('b', 2));
+	test2.insert(ft::pair<char, int>('d', 3));
+	test2.insert(ft::pair<char, int>('e', 4));
+	test2.insert(ft::pair<char, int>('f', 5));
+	// test2.insert(ft::pair<char, int>('g', 6));
+	// test2.insert(ft::pair<char, int>('h', 7));
+	// test2.insert(ft::pair<char, int>('i', 8));
+	// test2.insert(ft::pair<char, int>('j', 9));
 
-	// stck.push(100);
 
-	// cmp(stck, stck2); // 6
-	// cmp(stck2, stck); // 7
+	test2.print2D();
 	return (0);
 }

@@ -4,16 +4,16 @@
 namespace ft
 {
 	template<bool B, class T = void>
-	struct enable_if {};
+		struct enable_if {};
 
 	template<class T>
-	struct enable_if<true, T> { typedef T type; };
+		struct enable_if<true, T> { typedef T type; };
 
 	template <bool is_integral, typename T>
         struct is_integral_res {
             typedef T type;
             static const bool value = is_integral;
-            };
+        };
 
     template <typename>
         struct is_integral_type : public is_integral_res<false, bool> {};
