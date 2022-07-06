@@ -5,7 +5,7 @@
 #include "vector.hpp"
 #include "print.hpp"
 #include "iterator.hpp"
-#include "containers_test/srcs/base.hpp"
+// #include "containers_test/srcs/base.hpp"
 #include "stack.hpp"
 #include <stack>
 #include <map>
@@ -39,30 +39,36 @@ void	cmp(const T_STACK &lhs, const T_STACK &rhs)
 
 int		main(void)
 {
-	map<char, int>	test;
-	ft::Rb_tree<char, ft::pair<char, int>, std::less<ft::pair<char, int> > > test2;
+	map<int, char>	test;
+	ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > > test2;
 
 	// test['a'] = 2;
 
 
-	test.insert(std::pair<char, int>('c', 6));
-	test.insert(std::pair<char, int>('d', 2));
-	test.insert(std::pair<char, int>('e', 3));
-	test.insert(std::pair<char, int>('f', 4));
-	test.insert(std::pair<char, int>('g', 5));
+	test.insert(std::pair<int ,char >(6, 'c'));
+	test.insert(std::pair<int ,char >(2, 'd'));
+	test.insert(std::pair<int ,char >(3, 'e'));
+	test.insert(std::pair<int ,char >(4, 'f'));
+	test.insert(std::pair<int ,char >(5, 'g'));
+	test.insert(std::pair<int ,char >(11, 'h'));
+	test.insert(std::pair<int ,char >(8, 'i'));
+	test.insert(std::pair<int ,char >(15, 'j'));
 
+	for (std::map<int, char>::iterator it = test.begin(); it != test.end(); it++)
+		std::cout << it->first << std::endl;
 
-	test2.insert(ft::pair<char, int>('c', 1));
-	test2.insert(ft::pair<char, int>('b', 2));
-	test2.insert(ft::pair<char, int>('d', 3));
-	test2.insert(ft::pair<char, int>('e', 4));
-	test2.insert(ft::pair<char, int>('f', 5));
-	// test2.insert(ft::pair<char, int>('g', 6));
-	// test2.insert(ft::pair<char, int>('h', 7));
-	// test2.insert(ft::pair<char, int>('i', 8));
-	// test2.insert(ft::pair<char, int>('j', 9));
+	test2.insert(ft::pair<int, char>(6, 'c'));
+	test2.insert(ft::pair<int, char>(2, 'd'));
+	test2.insert(ft::pair<int, char>(3, 'e'));
+	test2.insert(ft::pair<int, char>(4, 'f'));
+	test2.insert(ft::pair<int, char>(5, 'g'));
+	test2.insert(ft::pair<int, char>(11, 'h'));
+	test2.insert(ft::pair<int, char>(8, 'i'));
+	test2.insert(ft::pair<int, char>(15, 'j'));
 
+	// test2.print2D();
 
+	test2.erase(ft::pair<int, char>(15, 'j'));
 	test2.print2D();
 	return (0);
 }
