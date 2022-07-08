@@ -65,10 +65,20 @@ int		main(void)
 	test2.insert(ft::pair<int, char>(11, 'h'));
 	test2.insert(ft::pair<int, char>(8, 'i'));
 	test2.insert(ft::pair<int, char>(15, 'j'));
+	test2.insert(ft::pair<int, char>(16, 'j'));
+	test2.insert(ft::pair<int, char>(17, 'j'));
+	test2.insert(ft::pair<int, char>(18, 'j'));
+	test2.insert(ft::pair<int, char>(19, 'j'));
+	test2.insert(ft::pair<int, char>(20, 'j'));
+	test2.insert(ft::pair<int, char>(21, 'j'));
+	test2.insert(ft::pair<int, char>(22, 'j'));
+	test2.insert(ft::pair<int, char>(23, 'j'));
+	test2.insert(ft::pair<int, char>(24, 'j'));
+
 
 	// test2.print2D();
 
-	test2.erase(ft::pair<int, char>(15, 'j'));
+	// test2.erase(ft::pair<int, char>(15, 'j'));
 	test2.print2D();
 	return (0);
 }

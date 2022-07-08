@@ -303,13 +303,9 @@ namespace ft
 							parent->m_color = _rb_red;
 							sibling->m_color = _rb_black;
 							if (sibling->isOnLeft())
-							{
 								rotateRight(parent);
-							}
 							else
-							{
 								rotateLeft(parent);
-							}
 							fixDoubleBlack(x);
 						} 
 						else
@@ -319,13 +315,11 @@ namespace ft
 								if (sibling->m_left != NULL && sibling->m_left->m_color == _rb_red)
 								{
 									if (sibling->isOnLeft()) {
-										// m_left m_left
 										sibling->m_left->m_color = sibling->m_color;
 										sibling->m_color = parent->m_color;
 										rotateRight(parent);
 									}
 									else {
-										// right m_left
 										sibling->m_left->m_color = parent->m_color;
 										rotateRight(sibling);
 										rotateLeft(parent);
@@ -334,13 +328,11 @@ namespace ft
 								else
 								{
 									if (sibling->isOnLeft()) {
-										// m_left right
 										sibling->m_right->m_color = parent->m_color;
 										rotateLeft(sibling);
 										rotateRight(parent);
 									}
 									else {
-										// m_right m_right
 										sibling->m_right->m_color = sibling->m_color;
 										sibling->m_color = parent->m_color;
 										rotateLeft(parent);
@@ -350,7 +342,6 @@ namespace ft
 							}
 							else
 							{
-								// 2 black children
 								sibling->m_color = _rb_red;
 								if (parent->m_color == _rb_black)
 									fixDoubleBlack(parent);
@@ -361,65 +352,70 @@ namespace ft
 					}
 				}
 
-				void deleteNode(tree_node *v)
+				static void
+				delete_node(tree_node *node)
+				{
+					if (node != NULL)
+					{
+						if (node->m_parent)
+							delete node->m_parent;
+						if (node->m_left)
+							delete node->m_left;
+						if (node->m_right)
+							delete node->m_right;
+						if (node->m_value)
+							delete node->m_value;
+						delete node;
+					}
+				}
+
+				void
+				deleteNode(tree_node *v)
 				{
 					tree_node *u = BSTreplace(v);
 				
-					// True when u and v are both black
 					bool uvBlack = ((u == NULL || u->m_color == _rb_black) && (v->m_color == _rb_black));
 					tree_node *parent = v->m_parent;
 				
 					if (u == NULL) {
-						// u is NULL therefore v is leaf
 						if (v == m_header.m_parent)
 							m_header.m_parent = NULL;
 						else {
 							if (uvBlack)
 								fixDoubleBlack(v);
 							else {
-							// u or v is red
 								if (v->sibling() != NULL)
 									v->sibling()->m_color = _rb_red;
 							}
-					
-							// delete v from the tree
 							if (v->isOnLeft())
 								parent->m_left = NULL;
 							else
 								parent->m_right = NULL;
 						}
 						delete v;
-						return;
+						return ;
 					}
 					if (v->m_left == NULL or v->m_right == NULL) {
-						// v has 1 child
 						if (v == m_header.m_parent) {
-							// v is root, assign the value of u to v, and delete u
 							v->m_value = u->m_value;
 							v->m_left = v->m_right = NULL;
 							delete u;
 						}
 						else {
-							// Detach v from tree and move u up
-							if (v->isOnLeft()) {
+							if (v->isOnLeft())
 								parent->m_left = u;
-							}
-							else {
+							else
 								parent->m_right = u;
-							}
 							delete v;
 							u->m_parent = parent;
 							if (uvBlack) {
-							// u and v both black, fix double black at u
 								fixDoubleBlack(u);
 							} else {
-							// u or v red, m_color u black
 								u->m_color = _rb_black;
 							}
 						}
 						return;
 					}
-					// v has 2 children, swap values with successor and recurse
 					Rb_tree::tree_node::swapValues(u, v);
 					deleteNode(u);
 				}
@@ -481,7 +477,7 @@ namespace ft
 
 				void insert(Val data)
 				{
-					if(m_header.m_parent==NULL)
+					if(m_header.m_parent == NULL)
 					{
 						m_header.m_parent = createNode(data);
 						m_header.m_parent->m_color = _rb_black;
@@ -494,12 +490,10 @@ namespace ft
 				void erase(Val n)
 				{
 					if (m_header.m_parent == NULL)
-					// Tree is empty
-					return;
+						return;
 				
 					tree_node	*v = find(n);
-					// tree_node	*u;
-				
+
 					if (*v->m_value != n)
 					{
 						std::cout << "No node found to delete with value:" << n << endl;
