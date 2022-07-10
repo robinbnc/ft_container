@@ -97,6 +97,7 @@ int		main(void)
 	test2.insert(ft::pair<int, char>(27, 'j'));
 	test2.insert(ft::pair<int, char>(28, 'j'));
 	test2.insert(ft::pair<int, char>(29, 'j'));
+	test2.insert(ft::pair<int, char>(29, 'j'));
 	test2.insert(ft::pair<int, char>(30, 'j'));
 	for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = test2.begin(); it != test2.end(); it++)
 	{
@@ -109,7 +110,9 @@ int		main(void)
 		// sleep(1);
 		std::cout << it->first << std::endl;
 	}
-	test2.print2D();
+	test2.erase(ft::pair<int, char>(23412, 'j'));
+
+	// test2.print2D();
 
 	return (0);
 }

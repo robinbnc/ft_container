@@ -601,14 +601,17 @@ namespace ft
 						m_end.m_parent->m_right	 = NULL;
 					if (m_begin.m_parent)
 						m_begin.m_parent->m_left = NULL;
+					
 					if (m_header.m_parent == NULL)
-						return;
+						return ;
 				
-
-					if (*v->m_value != n)
+					if (!v
+						|| v == &m_begin
+						|| v == &m_end
+						|| *v->m_value != n)
 					{
 						std::cout << "No node found to delete with value:" << n << endl;
-						return;
+						return ;
 					}
 					deleteNode(v);
 					m_node_count--;
@@ -619,20 +622,23 @@ namespace ft
 				{
 					tree_node *temp = m_header.m_parent;
 
-					while (temp != NULL)
+					while (temp != NULL
+							&& temp != &m_begin
+							&& temp != &m_end)
 					{
-						if (to_find < *temp->m_value) {//remplacer par le compare
+						if (m_comp(to_find, *temp->m_value))
+						{
 							if (temp->m_left == NULL)
-								break;
+								break ;
 							else
 								temp = temp->m_left;
 						}
-						else if (to_find == *temp->m_value) {
-							break;
-						}
-						else {
+						else if (to_find == *temp->m_value)
+							break ;
+						else
+						{
 							if (temp->m_right == NULL)
-								break;
+								break ;
 							else
 								temp = temp->m_right;
 						}
