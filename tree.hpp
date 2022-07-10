@@ -19,9 +19,9 @@ namespace ft
 	template<typename Val>
 		struct	s_tree_node
 		{
-			typedef	struct	s_tree_node	t_tree_node;
-			typedef	t_tree_node*		m_ptr;
-			typedef	const t_tree_node*	m_const_ptr;
+			typedef	struct	s_tree_node			t_tree_node;
+			typedef	t_tree_node*				m_ptr;
+			typedef	const t_tree_node*			m_const_ptr;
 
 			Val				*m_value;
 			rb_tree_color	m_color;
@@ -87,19 +87,153 @@ namespace ft
 					(this->m_right && this->m_right->m_color == _rb_red));
 			}
 
-			static void swapColors(m_ptr x1, m_ptr x2) {
+			static void
+			swapColors(m_ptr x1, m_ptr x2)
+			{
 				rb_tree_color temp;
+
 				temp = x1->m_color;
 				x1->m_color = x2->m_color;
 				x2->m_color = temp;
 			}
 			
-			static void swapValues(m_ptr u, m_ptr v) {
+			static void
+			swapValues(m_ptr u, m_ptr v)
+			{
 				Val *temp;
+
 				temp = u->m_value;
 				u->m_value = v->m_value;
 				v->m_value = temp;
 			}
+
+			void
+			moveDown(m_ptr nParent)
+			{
+				if (this->m_parent != NULL)
+				{
+					if (isOnLeft())
+						m_parent->m_left = nParent;
+					else
+						m_parent->m_right = nParent;
+				}
+				nParent->m_parent = this->m_parent;
+				this->m_parent = nParent;
+			}
+
+			m_ptr
+			uncle()
+			{
+				if (m_parent == NULL || m_parent->m_parent == NULL)
+					return (NULL);
+			
+				if (m_parent->isOnLeft())
+					return (m_parent->m_parent->m_right);
+				else
+					return (m_parent->m_parent->m_left);
+			}
+		};
+
+		template<typename T>
+		struct Rb_tree_iterator
+		{
+			typedef T  value_type;
+			typedef T& reference;
+			typedef T* pointer;
+
+			typedef std::bidirectional_iterator_tag	iterator_category;
+			typedef ptrdiff_t						difference_type;
+
+			typedef Rb_tree_iterator<T>				_Self;
+			typedef typename s_tree_node<T>::m_ptr	_Base_ptr;
+			typedef s_tree_node<T>*					_Link_type;
+
+			Rb_tree_iterator()
+			: m_node() { }
+		
+			explicit
+			Rb_tree_iterator(_Link_type x)
+			: m_node(x) { }
+		
+			reference
+			operator*() const
+			{ return (*m_node->m_value); }
+		
+			pointer
+			operator->() const // pas sur du tout recheck
+			{ return ((m_node)->m_value); }
+		
+			_Self&
+			operator++()
+			{
+				m_node = Rb_tree_increment(m_node);
+				return (*this);
+			}
+		
+			_Self
+			operator++(int)
+			{
+				_Self tmp = *this;
+				m_node = Rb_tree_increment(m_node);
+				return (tmp);
+			}
+		
+			_Self&
+			operator--()
+			{
+				m_node = Rb_tree_decrement(m_node);
+				return (*this);
+			}
+		
+			_Self
+			operator--(int)
+			{
+				_Self tmp = *this;
+				m_node = Rb_tree_decrement(m_node);
+				return (tmp);
+			}
+
+			bool
+			operator==(const _Self& x) const
+			{ return (m_node == x.m_node); }
+
+			bool
+			operator!=(const _Self& x) const
+			{ return (m_node != x.m_node); }
+
+			_Base_ptr m_node;
+
+			private:
+				_Base_ptr
+				Rb_tree_increment(_Base_ptr node)
+				{
+					if (node->m_right != NULL)
+						return (node->m_right->minimum(node->m_right));
+					else if (node->isOnLeft() && node->m_parent != NULL)
+							return (node->m_parent);
+					else
+					{
+						while (!node->isOnLeft())
+							node = node->m_parent;
+						return (node->m_parent);
+					}
+				}
+
+				_Base_ptr
+				Rb_tree_decrement(_Base_ptr node)
+				{
+					if (node->m_left != NULL)
+						return (node->m_left->maximum(node->m_left));
+					else if (!node->isOnLeft()
+							&& node->m_parent != NULL)
+							return (node->m_parent);
+					else
+					{
+						while (node->isOnLeft())
+							node = node->m_parent;
+						return (node->m_parent);
+					}
+				}
 		};
 
 		template<typename Key, typename Val/* Pair */,
@@ -107,15 +241,21 @@ namespace ft
 		class Rb_tree
 		{
 			public:
-				typedef	struct	s_tree_node<Val>	tree_node;
-				typedef std::allocator<tree_node>	Node_allocator;
-				typedef std::size_t					size_type;
+				typedef	struct	s_tree_node<Val>		tree_node;
+				typedef std::allocator<tree_node>		Node_allocator;
+				typedef std::size_t						size_type;
+				typedef ft::Rb_tree_iterator<Val> 		iterator;
+
+				typedef std::bidirectional_iterator_tag	iterator_category;
+				typedef ptrdiff_t						difference_type;
 
 			protected:
 				Compare			m_comp;
 				Node_allocator	m_node_allocator;
 				Alloc			m_val_allocator;
 				tree_node		m_header;
+				tree_node		m_end;
+				tree_node		m_begin;
 				size_type		m_node_count;
 
 			private:
@@ -140,150 +280,104 @@ namespace ft
 					return (ret);
 				}
 
-				tree_node *rotateLeft(tree_node *node)
-    			{
-    			    tree_node *x = node->m_right;
-    			    tree_node *y = x->m_left;
-    			    x->m_left = node;
-    			    node->m_right = y;
-    			    node->m_parent = x; // m_parent resetting is also important->
-    			    if(y!= NULL)
-    			        y->m_parent = node;
-    			    return(x);
-    			}
-    			//this function performs m_right rotation
-    			tree_node *rotateRight(tree_node *node)
-    			{
-    			    tree_node *x = node->m_left;
-    			    tree_node *y = x->m_right;
-    			    x->m_right = node;
-    			    node->m_left = y;
-    			    node->m_parent = x;
-    			    if(y!=NULL)
-    			        y->m_parent = node;
-    			    return(x);
-    			}
-
-				tree_node *insertAndReblance(tree_node *root, Val data)
+				void
+				_M_reset_centinels( void )
 				{
-					static bool ll = false;
-					static bool rr = false;
-					static bool lr = false;
-					static bool rl = false;
+					m_header.m_left				= m_header.minimum(_M_get_root());
+					m_header.m_right			= m_header.maximum(_M_get_root());
 
-					bool f = false;
-					
-					if(root == NULL)
-						return(createNode(data));
-					else if(m_comp(data, *root->m_value))
-					{
-						root->m_left = insertAndReblance(root->m_left, data);
-						root->m_left->m_parent = root;
-						if(root!=m_header.m_parent)
-						{
-							if(root->m_color==_rb_red && root->m_left->m_color==_rb_red)
-								f = true;
-						}
-					}
-					else
-					{
-						root->m_right = insertAndReblance(root->m_right,data);
-						root->m_right->m_parent = root;
-						if(root!=m_header.m_parent)
-						{
-							if(root->m_color==_rb_red && root->m_right->m_color==_rb_red)
-								f = true;
-						}
-					}
-					if(ll) // for m_left rotate.
-					{
-						root = rotateLeft(root);
-						root->m_color = _rb_black;
-						root->m_left->m_color = _rb_red;
-						ll = false;
-					}
-					else if(rr) // for m_right rotate
-					{
-						root = rotateRight(root);
-						root->m_color = _rb_black;
-						root->m_right->m_color = _rb_red;
-						rr  = false;
-					}
-					else if(rl)  // for m_right and then m_left
-					{
-						root->m_right = rotateRight(root->m_right);
-						root->m_right->m_parent = root;
-						root = rotateLeft(root);
-						root->m_color = _rb_black;
-						root->m_left->m_color = _rb_red;
-			
-						rl = false;
-					}
-					else if(lr)  // for m_left and then m_right->
-					{
-						root->m_left = rotateLeft(root->m_left);
-						root->m_left->m_parent = root;
-						root = rotateRight(root);
-						root->m_color = _rb_black;
-						root->m_right->m_color = _rb_red;
-						lr = false;
-					}
-					if(f)
-					{
-						if(root->m_parent->m_right == root)
-						{
-							if(root->m_parent->m_left==NULL || root->m_parent->m_left->m_color==_rb_black)
-							{
-								if(root->m_left!=NULL && root->m_left->m_color==_rb_red)
-									rl = true;
-								else if(root->m_right!=NULL && root->m_right->m_color==_rb_red)
-									ll = true;
-							}
-							else
-							{
-								root->m_parent->m_left->m_color = _rb_black;
-								root->m_color = _rb_black;
-								if(root->m_parent!=m_header.m_parent)
-									root->m_parent->m_color = _rb_red;
-							}
-						}
-						else  
-						{
-							if(root->m_parent->m_right==NULL || root->m_parent->m_right->m_color==_rb_black)
-							{
-								if(root->m_left!=NULL && root->m_left->m_color==_rb_red)
-									rr = true;
-								else if(root->m_right!=NULL && root->m_right->m_color==_rb_red)
-									lr = true;
-							}
-							else
-							{
-								root->m_parent->m_right->m_color = _rb_black;
-								root->m_color = _rb_black;
-								if(root->m_parent!=m_header.m_parent)
-									root->m_parent->m_color = _rb_red;
-							}
-						}
-						f = false;
-					}
-					return(root); 
+					m_header.m_right->m_right	= &m_end;
+					m_end.m_parent				= m_header.m_right;
+					m_header.m_right			= &m_end;
+
+					m_header.m_left->m_left		= &m_begin;
+					m_begin.m_parent			= m_header.m_left;
+					m_header.m_left				= &m_begin;
 				}
 
 				tree_node *BSTreplace(tree_node *x)
 				{
-					// when node have 2 children
 					if (x->m_left != NULL && x->m_right != NULL)
 						return (Rb_tree::tree_node::minimum(x->m_right));
-				
-					// when leaf
 					if (x->m_left == NULL && x->m_right == NULL)
 						return NULL;
-				
-					// when single child
 					if (x->m_left != NULL)
 						return x->m_left;
 					else
 						return x->m_right;
+				}
+
+				void leftRotateErase(tree_node *x)
+				{
+					tree_node *nParent = x->m_right;
+				
+					if (x == m_header.m_parent)
+						m_header.m_parent = nParent;
+					x->moveDown(nParent);
+					x->m_right = nParent->m_left;
+					if (nParent->m_left != NULL)
+					nParent->m_left->m_parent = x;
+					nParent->m_left = x;
+				}
+				
+				void rightRotateErase(tree_node *x)
+				{
+					tree_node *nParent = x->m_left;
+				
+					if (x == m_header.m_parent)
+						m_header.m_parent = nParent;
+					x->moveDown(nParent);
+					x->m_left = nParent->m_right;
+					if (nParent->m_right != NULL)
+					nParent->m_right->m_parent = x;
+					nParent->m_right = x;
+				}
+
+				void fixRedRed(tree_node *x)
+				{
+					if (x == m_header.m_parent) {
+						x->m_color = _rb_black;
+						return;
+					}
+				
+					tree_node	*parent = x->m_parent;
+					tree_node	*grandparent = parent->m_parent;
+					tree_node	*uncle = x->uncle();
+				
+					if (parent->m_color == _rb_black)
+						return ;
+					if (uncle != NULL && uncle->m_color == _rb_red)
+					{
+						parent->m_color = _rb_black;
+						uncle->m_color = _rb_black;
+						grandparent->m_color = _rb_red;
+						fixRedRed(grandparent);
+					}
+					else
+					{
+						if (parent->isOnLeft())
+						{
+							if (x->isOnLeft())
+								Rb_tree::tree_node::swapColors(parent, grandparent);
+							else
+							{
+								leftRotateErase(parent);
+								Rb_tree::tree_node::swapColors(x, grandparent);
+							}
+							rightRotateErase(grandparent);
+						}
+						else
+						{
+							if (x->isOnLeft())
+							{
+								rightRotateErase(parent);
+								Rb_tree::tree_node::swapColors(x, grandparent);
+							}
+							else
+								Rb_tree::tree_node::swapColors(parent, grandparent);
+							leftRotateErase(grandparent);
+						}
+					}
 				}
 
 				void fixDoubleBlack(tree_node *x)
@@ -295,77 +389,60 @@ namespace ft
 					tree_node *parent = x->m_parent;
 
 					if (sibling == NULL)
+					{
 						fixDoubleBlack(parent);
+						return ;
+					}
+					if (sibling->m_color == _rb_red)
+					{
+						parent->m_color = _rb_red;
+						sibling->m_color = _rb_black;
+						if (sibling->isOnLeft())
+							rightRotateErase(parent);
+						else
+							leftRotateErase(parent);
+						fixDoubleBlack(x);
+					} 
 					else
 					{
-						if (sibling->m_color == _rb_red)
+						if (sibling->hasRedChild())
 						{
-							parent->m_color = _rb_red;
-							sibling->m_color = _rb_black;
-							if (sibling->isOnLeft())
-								rotateRight(parent);
+							if (sibling->m_left != NULL && sibling->m_left->m_color == _rb_red)
+							{
+								if (sibling->isOnLeft()) {
+									sibling->m_left->m_color = sibling->m_color;
+									sibling->m_color = parent->m_color;
+									rightRotateErase(parent);
+								}
+								else {
+									sibling->m_left->m_color = parent->m_color;
+									rightRotateErase(sibling);
+									leftRotateErase(parent);
+								}
+							}
 							else
-								rotateLeft(parent);
-							fixDoubleBlack(x);
-						} 
+							{
+								if (sibling->isOnLeft()) {
+									sibling->m_right->m_color = parent->m_color;
+									leftRotateErase(sibling);
+									rightRotateErase(parent);
+								}
+								else {
+									sibling->m_right->m_color = sibling->m_color;
+									sibling->m_color = parent->m_color;
+									leftRotateErase(parent);
+								}
+							}
+							parent->m_color = _rb_black;
+						}
 						else
 						{
-							if (sibling->hasRedChild())
-							{
-								if (sibling->m_left != NULL && sibling->m_left->m_color == _rb_red)
-								{
-									if (sibling->isOnLeft()) {
-										sibling->m_left->m_color = sibling->m_color;
-										sibling->m_color = parent->m_color;
-										rotateRight(parent);
-									}
-									else {
-										sibling->m_left->m_color = parent->m_color;
-										rotateRight(sibling);
-										rotateLeft(parent);
-									}
-								}
-								else
-								{
-									if (sibling->isOnLeft()) {
-										sibling->m_right->m_color = parent->m_color;
-										rotateLeft(sibling);
-										rotateRight(parent);
-									}
-									else {
-										sibling->m_right->m_color = sibling->m_color;
-										sibling->m_color = parent->m_color;
-										rotateLeft(parent);
-									}
-								}
-								parent->m_color = _rb_black;
-							}
+							sibling->m_color = _rb_red;
+							if (parent->m_color == _rb_black)
+								fixDoubleBlack(parent);
 							else
-							{
-								sibling->m_color = _rb_red;
-								if (parent->m_color == _rb_black)
-									fixDoubleBlack(parent);
-								else
-									parent->m_color = _rb_black;
-							}
+								parent->m_color = _rb_black;
 						}
-					}
-				}
-
-				static void
-				delete_node(tree_node *node)
-				{
-					if (node != NULL)
-					{
-						if (node->m_parent)
-							delete node->m_parent;
-						if (node->m_left)
-							delete node->m_left;
-						if (node->m_right)
-							delete node->m_right;
-						if (node->m_value)
-							delete node->m_value;
-						delete node;
 					}
 				}
 
@@ -376,8 +453,9 @@ namespace ft
 				
 					bool uvBlack = ((u == NULL || u->m_color == _rb_black) && (v->m_color == _rb_black));
 					tree_node *parent = v->m_parent;
-				
-					if (u == NULL) {
+					
+					if (u == NULL)
+					{
 						if (v == m_header.m_parent)
 							m_header.m_parent = NULL;
 						else {
@@ -395,7 +473,8 @@ namespace ft
 						delete v;
 						return ;
 					}
-					if (v->m_left == NULL or v->m_right == NULL) {
+					if (v->m_left == NULL || v->m_right == NULL)
+					{
 						if (v == m_header.m_parent) {
 							v->m_value = u->m_value;
 							v->m_left = v->m_right = NULL;
@@ -414,7 +493,7 @@ namespace ft
 								u->m_color = _rb_black;
 							}
 						}
-						return;
+						return ;
 					}
 					Rb_tree::tree_node::swapValues(u, v);
 					deleteNode(u);
@@ -450,16 +529,26 @@ namespace ft
 				Rb_tree()
 				: m_node_count(0)
 				{
-					this->m_header.m_color = _rb_red;
-					this->m_header.m_parent = 0;
-					this->m_header.m_left = &this->m_header;
-					this->m_header.m_right = &this->m_header;
+					this->m_header.m_color	= _rb_red;
+					this->m_header.m_parent	= NULL;
+					this->m_begin.m_parent	= NULL;
+					this->m_end.m_parent	= NULL;
+					this->m_header.m_left	= &this->m_header;
+					this->m_header.m_right	= &this->m_header;
 				}
 
 				~Rb_tree()
 				{ }
 
-				// _ITERATORS_
+				// _ITERATORS_ || MANQUE LES CONST ITERATORS
+
+				iterator
+				begin()
+				{ return (iterator(m_header.m_left->m_parent)); }
+
+				iterator
+				end()
+				{ return (iterator(m_header.m_right)); }
 
 				// _CAPACITY_
 				bool
@@ -474,25 +563,47 @@ namespace ft
 				max_size() const
 				{ return (m_node_allocator.max_size()); }
 
-
-				void insert(Val data)
+				void insert(Val n)
 				{
-					if(m_header.m_parent == NULL)
-					{
-						m_header.m_parent = createNode(data);
-						m_header.m_parent->m_color = _rb_black;
-					}
-					else
-						m_header.m_parent = insertAndReblance(m_header.m_parent, data);
-				}
+					tree_node *newNode = createNode(n);
 
+					if (m_end.m_parent)
+						m_end.m_parent->m_right	 = NULL;
+					if (m_begin.m_parent)
+						m_begin.m_parent->m_left = NULL;
+					if (m_header.m_parent == NULL)
+					{
+						newNode->m_color = _rb_black;
+						m_header.m_parent = newNode;
+					}
+					else {
+						tree_node *temp = find(n);
+					
+						if (*temp->m_value == n) {
+							return ;
+						}
+						newNode->m_parent = temp;
+						if (m_comp(n, *temp->m_value))
+							temp->m_left = newNode;
+						else
+							temp->m_right = newNode;
+						fixRedRed(newNode);
+					}
+					m_node_count++;
+					_M_reset_centinels();
+				}
 
 				void erase(Val n)
 				{
+					tree_node	*v = find(n);
+
+					if (m_end.m_parent)
+						m_end.m_parent->m_right	 = NULL;
+					if (m_begin.m_parent)
+						m_begin.m_parent->m_left = NULL;
 					if (m_header.m_parent == NULL)
 						return;
 				
-					tree_node	*v = find(n);
 
 					if (*v->m_value != n)
 					{
@@ -500,27 +611,30 @@ namespace ft
 						return;
 					}
 					deleteNode(v);
+					m_node_count--;
+					_M_reset_centinels();
 				}
 
 				tree_node *find(Val to_find)
 				{
 					tree_node *temp = m_header.m_parent;
+
 					while (temp != NULL)
 					{
 						if (to_find < *temp->m_value) {//remplacer par le compare
 							if (temp->m_left == NULL)
-							break;
+								break;
 							else
-							temp = temp->m_left;
+								temp = temp->m_left;
 						}
 						else if (to_find == *temp->m_value) {
 							break;
 						}
 						else {
 							if (temp->m_right == NULL)
-							break;
+								break;
 							else
-							temp = temp->m_right;
+								temp = temp->m_right;
 						}
 					} 
 					return (temp);

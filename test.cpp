@@ -11,6 +11,7 @@
 #include <map>
 #include "pair.hpp"
 #include "tree.hpp"
+#include <unistd.h>
 
 
 #ifndef NAME_SPACE
@@ -42,9 +43,6 @@ int		main(void)
 	map<int, char>	test;
 	ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > > test2;
 
-	// test['a'] = 2;
-
-
 	test.insert(std::pair<int ,char >(6, 'c'));
 	test.insert(std::pair<int ,char >(2, 'd'));
 	test.insert(std::pair<int ,char >(3, 'e'));
@@ -55,6 +53,9 @@ int		main(void)
 	test.insert(std::pair<int ,char >(15, 'j'));
 
 	for (std::map<int, char>::iterator it = test.begin(); it != test.end(); it++)
+		std::cout << it->first << std::endl;
+	std::cout << "===================================" << std::endl;
+	for (std::map<int, char>::iterator it = ++test.end(); it != test.begin(); it--)
 		std::cout << it->first << std::endl;
 
 	test2.insert(ft::pair<int, char>(6, 'c'));
@@ -76,9 +77,39 @@ int		main(void)
 	test2.insert(ft::pair<int, char>(24, 'j'));
 
 
-	// test2.print2D();
-
-	// test2.erase(ft::pair<int, char>(15, 'j'));
 	test2.print2D();
+
+
+	for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = test2.begin(); it != test2.end(); it++)
+	{
+		// sleep(1);
+		std::cout << it->first << std::endl;
+	}
+	std::cout << "===================================" << std::endl;
+	for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = --test2.end(); it != test2.begin(); it--)
+	{
+		// sleep(1);
+		std::cout << it->first << std::endl;
+	}
+	test2.insert(ft::pair<int, char>(25, 'j'));
+	test2.erase(ft::pair<int, char>(21, 'j'));
+	test2.insert(ft::pair<int, char>(26, 'j'));
+	test2.insert(ft::pair<int, char>(27, 'j'));
+	test2.insert(ft::pair<int, char>(28, 'j'));
+	test2.insert(ft::pair<int, char>(29, 'j'));
+	test2.insert(ft::pair<int, char>(30, 'j'));
+	for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = test2.begin(); it != test2.end(); it++)
+	{
+		// sleep(1);
+		std::cout << it->first << std::endl;
+	}
+	std::cout << "===================================" << std::endl;
+	for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = --test2.end(); it != test2.begin(); it--)
+	{
+		// sleep(1);
+		std::cout << it->first << std::endl;
+	}
+	test2.print2D();
+
 	return (0);
 }
