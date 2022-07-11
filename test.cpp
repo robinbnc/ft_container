@@ -58,7 +58,10 @@ int		main(void)
 	for (std::map<int, char>::iterator it = ++test.end(); it != test.begin(); it--)
 		std::cout << it->first << std::endl;
 
+	std::cout << (test.find(1) == test.begin() ? "found" : "not found") << std::endl;
+
 	test2.insert(ft::pair<int, char>(6, 'c'));
+	test2.insert(ft::pair<int, char>(2, 'd'));
 	test2.insert(ft::pair<int, char>(2, 'd'));
 	test2.insert(ft::pair<int, char>(3, 'e'));
 	test2.insert(ft::pair<int, char>(4, 'f'));
@@ -110,9 +113,10 @@ int		main(void)
 		// sleep(1);
 		std::cout << it->first << std::endl;
 	}
-	test2.erase(ft::pair<int, char>(23412, 'j'));
+	std::cout << test2.size() << "\n";
 
+	test2.clear();
+	std::cout << test2.size() << "\n";
 	// test2.print2D();
-
 	return (0);
 }

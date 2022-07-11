@@ -39,8 +39,8 @@ namespace ft
 
 			virtual ~reverse_iterator() {}
 
-			reverse_iterator
-			&operator=(const reverse_iterator& vector_it)
+			reverse_iterator&
+			operator=(const reverse_iterator& vector_it)
 			{
 				if (this == &vector_it)
 					return (*this);
