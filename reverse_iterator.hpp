@@ -8,11 +8,12 @@ namespace ft
 {
 	template<class Iter>
 	class reverse_iterator: public ft::iterator<
-								std::random_access_iterator_tag,
+								std::bidirectional_iterator_tag/* random_access_iterator_tag */,
 								typename iterator_traits<Iter>::value_type>
 	{
 		private:
 			Iter	m_current;
+
 		public:
 			typedef typename ft::iterator_traits<Iter>::iterator_category	iterator_category;
 			typedef typename ft::iterator_traits<Iter>::value_type			value_type;
@@ -93,7 +94,6 @@ namespace ft
 				return (tmp);
 			}
 
-
 			reverse_iterator&
 			operator+=(const difference_type n)
 			{
@@ -125,13 +125,13 @@ namespace ft
 		inline bool
 		operator==(const reverse_iterator<_Iterator>& x,
 				const reverse_iterator<_Iterator>& y)
-		{ return x.base() == y.base(); }
+		{ return (x.base() == y.base()); }
 
 	template<typename _Iterator>
 		inline bool
 		operator<(const reverse_iterator<_Iterator>& x,
 			const reverse_iterator<_Iterator>& y)
-		{ return y.base() < x.base(); }
+		{ return (y.base() < x.base()); }
 
 	template<typename _Iterator>
 		inline bool

@@ -32,7 +32,7 @@ namespace ft
 
 
 			s_tree_node()
-			:  m_value(NULL), m_color(_rb_red), m_parent(NULL), m_left(NULL), m_right(NULL) 
+			:  m_value(NULL), m_color(_rb_red), m_parent(NULL), m_left(NULL), m_right(NULL)
 			{}
 
 			static m_ptr
@@ -97,7 +97,7 @@ namespace ft
 				x1->m_color = x2->m_color;
 				x2->m_color = temp;
 			}
-			
+
 			static void
 			swapValues(m_ptr u, m_ptr v)
 			{
@@ -127,7 +127,7 @@ namespace ft
 			{
 				if (m_parent == NULL || m_parent->m_parent == NULL)
 					return (NULL);
-			
+
 				if (m_parent->isOnLeft())
 					return (m_parent->m_parent->m_right);
 				else
@@ -151,26 +151,26 @@ namespace ft
 
 				Rb_tree_iterator()
 				: m_node() { }
-			
+
 				explicit
 				Rb_tree_iterator(_Link_type x)
 				: m_node(x) { }
-			
+
 				reference
 				operator*() const
 				{ return (*m_node->m_value); }
-			
+
 				pointer
 				operator->() const // pas sur du tout recheck
 				{ return ((m_node)->m_value); }
-			
+
 				_Self&
 				operator++()
 				{
 					m_node = Rb_tree_increment(m_node);
 					return (*this);
 				}
-			
+
 				_Self
 				operator++(int)
 				{
@@ -178,14 +178,14 @@ namespace ft
 					m_node = Rb_tree_increment(m_node);
 					return (tmp);
 				}
-			
+
 				_Self&
 				operator--()
 				{
 					m_node = Rb_tree_decrement(m_node);
 					return (*this);
 				}
-			
+
 				_Self
 				operator--(int)
 				{
@@ -201,6 +201,10 @@ namespace ft
 				bool
 				operator!=(const _Self& x) const
 				{ return (m_node != x.m_node); }
+
+				_Base_ptr
+				base()
+				{ return (m_node); }
 
 				_Base_ptr m_node;
 
@@ -255,7 +259,7 @@ namespace ft
 
 					Rb_tree_const_iterator()
 					: m_node() { }
-				
+
 					explicit
 					Rb_tree_const_iterator(_Link_type x)
 					: m_node(x) { }
@@ -266,18 +270,18 @@ namespace ft
 					reference
 					operator*() const
 					{ return (*m_node->m_value); }
-				
+
 					pointer
 					operator->() const // pas sur du tout recheck
 					{ return ((m_node)->m_value); }
-				
+
 					_Self&
 					operator++()
 					{
 						m_node = Rb_tree_increment(m_node);
 						return (*this);
 					}
-				
+
 					_Self
 					operator++(int)
 					{
@@ -285,14 +289,14 @@ namespace ft
 						m_node = Rb_tree_increment(m_node);
 						return (tmp);
 					}
-				
+
 					_Self&
 					operator--()
 					{
 						m_node = Rb_tree_decrement(m_node);
 						return (*this);
 					}
-				
+
 					_Self
 					operator--(int)
 					{
@@ -309,6 +313,10 @@ namespace ft
 					operator!=(const _Self& x) const
 					{ return (m_node != x.m_node); }
 
+					_Base_ptr
+					base()
+					{ return (m_node); }
+
 					_Base_ptr m_node;
 
 					private:
@@ -317,11 +325,11 @@ namespace ft
 						{
 							if (node->m_right != NULL)
 								return (node->m_right->minimum(node->m_right));
-							else if (node->isOnLeft() && node->m_parent != NULL)
+							else if (node == node->m_parent->m_left && node->m_parent != NULL)
 									return (node->m_parent);
 							else
 							{
-								while (!node->isOnLeft())
+								while (!(node == node->m_parent->m_left))
 									node = node->m_parent;
 								return (node->m_parent);
 							}
@@ -332,12 +340,12 @@ namespace ft
 						{
 							if (node->m_left != NULL)
 								return (node->m_left->maximum(node->m_left));
-							else if (!node->isOnLeft()
+							else if (!(node == node->m_parent->m_left)
 									&& node->m_parent != NULL)
 									return (node->m_parent);
 							else
 							{
-								while (node->isOnLeft())
+								while (node == node->m_parent->m_left)
 									node = node->m_parent;
 								return (node->m_parent);
 							}
@@ -346,14 +354,14 @@ namespace ft
 
 		   template<typename Val>
 		    	inline bool
-		    	operator==(const _Rb_tree_iterator<Val>& x,
-							const _Rb_tree_const_iterator<Val>& y)
+		    	operator==(const Rb_tree_iterator<Val>& x,
+							const Rb_tree_const_iterator<Val>& y)
 				{ return x._M_node == y._M_node; }
 
 		   template<typename Val>
 				inline bool
-				operator!=(const _Rb_tree_iterator<Val>& x,
-							const _Rb_tree_const_iterator<Val>& y)
+				operator!=(const Rb_tree_iterator<Val>& x,
+							const Rb_tree_const_iterator<Val>& y)
 				{ return x._M_node != y._M_node; }
 
 		template<typename Key, typename Val/* Pair */,
@@ -391,7 +399,7 @@ namespace ft
 				tree_node*
 				_M_get_root( void )
 				{ return (m_header.m_parent); }
-				
+
 				tree_node*
 				createNode(Val value)
 				{
@@ -434,7 +442,7 @@ namespace ft
 				void leftRotate(tree_node *x)
 				{
 					tree_node *nParent = x->m_right;
-				
+
 					if (x == m_header.m_parent)
 						m_header.m_parent = nParent;
 					x->moveDown(nParent);
@@ -443,11 +451,11 @@ namespace ft
 					nParent->m_left->m_parent = x;
 					nParent->m_left = x;
 				}
-				
+
 				void rightRotate(tree_node *x)
 				{
 					tree_node *nParent = x->m_left;
-				
+
 					if (x == m_header.m_parent)
 						m_header.m_parent = nParent;
 					x->moveDown(nParent);
@@ -463,11 +471,11 @@ namespace ft
 						x->m_color = _rb_black;
 						return;
 					}
-				
+
 					tree_node	*parent = x->m_parent;
 					tree_node	*grandparent = parent->m_parent;
 					tree_node	*uncle = x->uncle();
-				
+
 					if (parent->m_color == _rb_black)
 						return ;
 					if (uncle != NULL && uncle->m_color == _rb_red)
@@ -508,7 +516,7 @@ namespace ft
 				{
 					if (x == m_header.m_parent)
 						return;
-				
+
 					tree_node *sibling = x->sibling();
 					tree_node *parent = x->m_parent;
 
@@ -526,7 +534,7 @@ namespace ft
 						else
 							leftRotate(parent);
 						fixDoubleBlack(x);
-					} 
+					}
 					else
 					{
 						if (sibling->hasRedChild())
@@ -587,11 +595,11 @@ namespace ft
 				deleteNode(tree_node *v)
 				{
 					tree_node *u = BSTreplace(v);
-				
+
 					bool uvBlack = ((u == NULL || u->m_color == _rb_black)
 									&& (v->m_color == _rb_black));
 					tree_node *parent = v->m_parent;
-					
+
 					if (u == NULL)
 					{
 						if (v == m_header.m_parent)
@@ -718,19 +726,19 @@ namespace ft
 
 				reverse_iterator
 				rbegin()
-				{ return (reverse_iterator(m_header.m_right->m_parent)); }
+				{ return (reverse_iterator(end())); }
 
 				const_reverse_iterator
 				rbegin() const
-				{ return (const_reverse_iterator(m_header.m_right->m_parent)); }
+				{ return (const_reverse_iterator(end())); }
 
 				reverse_iterator
 				rend()
-				{ return (reverse_iterator(m_header.m_left)); }
+				{ return (reverse_iterator(begin())); }
 
 				const_reverse_iterator
 				rend() const
-				{ return (const_reverse_iterator(m_header.m_left)); }
+				{ return (const_reverse_iterator(begin())); }
 
 				// _CAPACITY_
 				bool
@@ -747,21 +755,21 @@ namespace ft
 
 
 				// __Modifiers__
-				void
-				insert(Val n)
+				ft::pair<iterator, bool>
+				insert(const Val& n)
 				{
 					if (m_end.m_parent)
 						m_end.m_parent->m_right	 = NULL;
 					if (m_begin.m_parent)
 						m_begin.m_parent->m_left = NULL;
 
-					tree_node *temp = find(n);
+					tree_node *temp = find(n.first);
 
 					if (m_header.m_parent && temp != &m_end && temp != &m_begin
 						&& *temp->m_value == n)
 					{
-						_M_reset_centinels();						
-						return ;
+						_M_reset_centinels();
+						return (ft::pair<iterator, bool>(iterator(temp), false));
 					}
 
 					tree_node *newNode = createNode(n);
@@ -774,7 +782,7 @@ namespace ft
 					else
 					{
 						newNode->m_parent = temp;
-						if (m_comp(n, *temp->m_value))
+						if (m_comp(n.first, temp->m_value->first))
 							temp->m_left = newNode;
 						else
 							temp->m_right = newNode;
@@ -782,9 +790,11 @@ namespace ft
 					}
 					m_node_count++;
 					_M_reset_centinels();
+					return (ft::pair<iterator, bool>(iterator(newNode), true));
 				}
 
-				void erase(Val n)
+				size_type
+				erase(const Key& n)
 				{
 					tree_node	*v = find(n);
 
@@ -792,34 +802,38 @@ namespace ft
 						m_end.m_parent->m_right	 = NULL;
 					if (m_begin.m_parent)
 						m_begin.m_parent->m_left = NULL;
-					
+
 					if (m_header.m_parent == NULL)
-						return ;
-				
+						return (0);
+
 					if (!v
 						|| v == &m_begin
 						|| v == &m_end
-						|| *v->m_value != n)
-					{
-						std::cout << "No node found to delete with value:" << n << endl;
-						return ;
-					}
+						|| v->m_value->first != n)
+						return (0);
 					deleteNode(v);
 					m_node_count--;
 					if (m_node_count)
 						_M_reset_centinels();
+					return (1);
 				}
 
 				void
 				clear( void )
 				{
 					while (size())
-						erase(*begin().m_node->m_value);
+						erase(begin().base()->m_value->first);
+					m_header.m_parent	= NULL;
+					m_begin.m_parent	= NULL;
+					m_end.m_parent		= NULL;
+					m_header.m_left		= &m_header;
+					m_header.m_right	= &m_header;
+
 				}
 
 				// __Operations__
 				tree_node*
-				find(Val to_find)
+				find(const Key& to_find)
 				{
 					tree_node *temp = m_header.m_parent;
 
@@ -827,25 +841,222 @@ namespace ft
 							&& temp != &m_begin
 							&& temp != &m_end)
 					{
-						if (m_comp(to_find, *temp->m_value))
+						if (m_comp(to_find, temp->m_value->first))
 						{
 							if (temp->m_left == NULL)
 								break ;
-							else
-								temp = temp->m_left;
+							temp = temp->m_left;
 						}
-						else if (to_find == *temp->m_value)
+						else if (to_find == temp->m_value->first)
 							break ;
 						else
 						{
 							if (temp->m_right == NULL)
 								break ;
-							else
-								temp = temp->m_right;
+							temp = temp->m_right;
 						}
-					} 
-					return (temp);
+					}
+					return ((!temp || temp == &m_begin) ? m_header.m_right : temp);
 				}
+
+				iterator
+				lower_bound(const Key& k)
+				{
+					if (m_comp(k, this->begin()->first) || k == this->begin()->first)
+						return (begin());
+					else if (m_comp(this->rbegin()->first, k))
+						return (end());
+
+					tree_node	*temp = m_header.m_parent;
+					int			flag = 0;
+
+					while (temp != NULL
+							&& temp != &m_begin
+							&& temp != &m_end)
+					{
+						if (m_comp(k, temp->m_value->first))
+						{
+							if (temp->m_left == NULL || flag == 1)
+								break ;
+							flag = -1;
+							temp = temp->m_left;
+						}
+						else if (k == temp->m_value->first)
+							break ;
+						else
+						{
+							if (temp->m_right == NULL || flag == -1)
+							{
+								temp = temp->m_parent;
+								break ;
+							}
+							flag = 1;
+							temp = temp->m_right;
+						}
+					}
+					return (iterator(temp));
+				}
+
+				const_iterator
+				lower_bound(const Key& k) const
+				{
+					if (m_comp(k, this->begin()->first) || k == this->begin()->first)
+						return (begin());
+					else if (m_comp(this->rbegin()->first, k))
+						return (end());
+
+					tree_node	*temp = m_header.m_parent;
+					int			flag = 0;
+
+					while (temp != NULL
+							&& temp != &m_begin
+							&& temp != &m_end)
+					{
+						if (m_comp(k, temp->m_value->first))
+						{
+							if (temp->m_left == NULL || flag == 1)
+								break ;
+							flag = -1;
+							temp = temp->m_left;
+						}
+						else if (k == temp->m_value->first)
+							break ;
+						else
+						{
+							if (temp->m_right == NULL || flag == -1)
+							{
+								temp = temp->m_parent;
+								break ;
+							}
+							flag = 1;
+							temp = temp->m_right;
+						}
+					}
+					return (const_iterator(temp));
+				}
+
+				iterator
+				upper_bound(const Key& k)
+				{
+					if (m_comp(k, this->begin()->first))
+						return (begin());
+					else if (k == this->begin()->first)
+						return (++begin());
+					else if (m_comp(this->rbegin()->first, k))
+						return (end());
+
+					tree_node	*temp = m_header.m_parent;
+					int			flag = 0;
+
+					while (temp != NULL
+							&& temp != &m_begin
+							&& temp != &m_end)
+					{
+						if (m_comp(k, temp->m_value->first))
+						{
+							if (temp->m_left == NULL || flag == 1)
+								break ;
+							flag = -1;
+							temp = temp->m_left;
+						}
+						else if (k == temp->m_value->first)
+							return (++iterator(lower_bound(k)));
+						else
+						{
+							if (temp->m_right == NULL || flag == -1)
+								return (++iterator(lower_bound(k)));
+							temp = temp->m_right;
+						}
+					}
+					return (iterator(temp));
+				}
+
+				const_iterator
+				upper_bound(const Key& k) const
+				{
+					if (m_comp(k, this->begin()->first))
+						return (begin());
+					else if (k == this->begin()->first)
+						return (++begin());
+					else if (m_comp(this->rbegin()->first, k))
+						return (end());
+
+					tree_node	*temp = m_header.m_parent;
+					int			flag = 0;
+
+					while (temp != NULL
+							&& temp != &m_begin
+							&& temp != &m_end)
+					{
+						if (m_comp(k, temp->m_value->first))
+						{
+							if (temp->m_left == NULL || flag == 1)
+								break ;
+							flag = -1;
+							temp = temp->m_left;
+						}
+						else if (k == temp->m_value->first)
+							return (++const_iterator(lower_bound(k)));
+						else
+						{
+							if (temp->m_right == NULL || flag == -1)
+								return (++const_iterator(lower_bound(k)));
+							temp = temp->m_right;
+						}
+					}
+					return (const_iterator(temp));
+				}
+
+				iterator
+				equal_range(const Key& k)
+				{
+					tree_node *tmp = find(k);
+
+					if (tmp != end().base())
+						return (iterator(tmp));
+					return (upper_bound(k));
+				}
+
+				const_iterator
+				equal_range(const Key& k) const
+				{
+					tree_node *temp = m_header.m_parent;
+
+					while (temp != NULL
+							&& temp != &m_begin
+							&& temp != &m_end)
+					{
+						if (m_comp(k, temp->m_value->first))
+						{
+							if (temp->m_left == NULL)
+								break ;
+							temp = temp->m_left;
+						}
+						else if (k == temp->m_value->first)
+							break ;
+						else
+						{
+							if (temp->m_right == NULL)
+								break ;
+							temp = temp->m_right;
+						}
+					}
+					(!temp || temp == &m_begin) ? temp = m_header.m_right : temp;
+
+					if (temp != end().base())
+						return (const_iterator(temp));
+					return (upper_bound(k));
+				}
+
+				//__Allocator__
+				Alloc
+				get_allocator() const
+				{ return (m_val_allocator); }
+
+				Compare
+				get_comp() const
+				{ return (m_comp); }
+
 		};
 }
 
