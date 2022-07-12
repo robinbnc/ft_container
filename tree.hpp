@@ -682,6 +682,19 @@ namespace ft
 					this->m_header.m_right	= &this->m_header;
 				}
 
+				Rb_tree(const Compare& comp, Alloc allocator)
+				{
+					this->m_header.m_color	= _rb_red;
+					this->m_header.m_value	= NULL;
+					this->m_header.m_parent	= NULL;
+					this->m_begin.m_parent	= NULL;
+					this->m_end.m_parent	= NULL;
+					this->m_header.m_left	= &this->m_header;
+					this->m_header.m_right	= &this->m_header;
+					m_comp = comp;
+					m_val_allocator = allocator;
+				}
+
 				~Rb_tree()
 				{ }
 
