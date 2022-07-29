@@ -126,12 +126,11 @@ namespace ft
 				mapped_type&
 				operator[] (const key_type& k)
 		       {
-					iterator it = lower_bound(k);
+					iterator it = find(k);
 
-					if (it == end()
-						|| key_comp()(k, (*it).first))
+					if (it == end())
 						it = insert(it, value_type(k, mapped_type()));
-					return (*it).second;
+					return ((*it).second);
 				}
 
 				// __Modifiers__
@@ -151,7 +150,10 @@ namespace ft
 					insert(InputIterator first, InputIterator last)
 					{
 						for (; first != last; first++)
-							m_tree.insert(*first);
+						{
+							if (find(first->first) == end())
+								m_tree.insert(*first);
+						}
 					}
 
 				void
@@ -165,23 +167,22 @@ namespace ft
 				void
 				erase(iterator first, iterator last)
 				{
+					Rep_type new_tree;
+
 					for (iterator it = first; it != last; it++)
+						new_tree.insert(*it);
+
+					for (iterator it = new_tree.begin(); it != new_tree.end(); it++)
 						m_tree.erase(it->first);
 				}
 
 				void
 				swap(map& x)
-				{
-					Rep_type tmp = m_tree;
-
-					m_tree = x;
-					x = tmp;
-				}
+				{ m_tree.swap(x.m_tree); }
 
 				void
 				clear()
 				{ m_tree.clear(); }
-
 
 				// __Observers__
 				key_compare
@@ -190,17 +191,31 @@ namespace ft
 
 				value_compare
 				value_comp() const
-				{ return (value_compare(m_tree.key_comp())); }
+				{ return (value_compare(key_comp())); }
 
 				// __Operations__
 				iterator
 				find(const key_type& k)
-				{ return (iterator(m_tree.find(k))); }
+				{
+					iterator to_find = iterator(m_tree.find(k));
+
+					if (size() == 0
+						|| (to_find != end()
+						&& to_find->first != k))
+						return (end());
+					return (to_find); 
+				}
 
 				const_iterator
 				find(const key_type& k) const
-				{ return (const_iterator(m_tree.find(k))); }
+				{
+					const_iterator to_find = iterator(m_tree.find(k));
 
+					if (to_find != end()
+						&& to_find->first != k)
+						return (end());
+					return (to_find); 
+				}
 				size_type
 				count(const key_type& k) const
 				{ return (find(k) == end() ? 0 : 1); }
@@ -236,12 +251,58 @@ namespace ft
 				get_allocator() const
 				{ return (m_tree.get_allocator()); }
 
-
 				// __DEBUG!!!__
 				void
 				print (void)
 				{ m_tree.print2D(); }
+
+				template<typename Key_, typename Tp_, typename Compare_, typename Alloc_>
+					friend inline bool
+					operator==(const map<Key_, Tp_, Compare_, Alloc_>& x,
+					const map<Key_, Tp_, Compare_, Alloc_>& y);
+
+				template<typename Key_, typename Tp_, typename Compare_, typename Alloc_>
+					friend inline bool
+					operator<(const map<Key_, Tp_, Compare_, Alloc_>& x,
+					const map<Key_, Tp_, Compare_, Alloc_>& y);
+
 		};
+
+		template<typename Key, typename Tp, typename Compare, typename Alloc>
+			inline bool
+			operator==(const map<Key, Tp, Compare, Alloc>& x,
+			const map<Key, Tp, Compare, Alloc>& y)
+			{ return (x.m_tree == y.m_tree); }
+		
+		template<typename Key, typename Tp, typename Compare, typename Alloc>
+			inline bool
+			operator<(const map<Key, Tp, Compare, Alloc>& x,
+			const map<Key, Tp, Compare, Alloc>& y)
+			{ return (x.m_tree < y.m_tree); }
+		
+		template<typename Key, typename Tp, typename Compare, typename Alloc>
+			inline bool
+			operator!=(const map<Key, Tp, Compare, Alloc>& x,
+			const map<Key, Tp, Compare, Alloc>& y)
+			{ return !(x == y); }
+		
+		template<typename Key, typename Tp, typename Compare, typename Alloc>
+			inline bool
+			operator>(const map<Key, Tp, Compare, Alloc>& x,
+			const map<Key, Tp, Compare, Alloc>& y)
+			{ return (y < x); }
+		
+		template<typename Key, typename Tp, typename Compare, typename Alloc>
+			inline bool
+			operator<=(const map<Key, Tp, Compare, Alloc>& x,
+			const map<Key, Tp, Compare, Alloc>& y)
+			{ return !(y < x); }
+		
+		template<typename Key, typename Tp, typename Compare, typename Alloc>
+			inline bool
+			operator>=(const map<Key, Tp, Compare, Alloc>& x,
+			const map<Key, Tp, Compare, Alloc>& y)
+			{ return !(x < y); }
 }
 
 #endif

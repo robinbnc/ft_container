@@ -90,7 +90,7 @@ namespace ft
 		}
 
 		vector<T>
-		&operator=( vector<T> &a )
+		&operator=( vector<T> &a )// maybe cont le vector
 		{
 			size_type	size_a = a.size();
 

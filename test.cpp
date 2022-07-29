@@ -12,8 +12,8 @@
 #include "pair.hpp"
 #include "tree.hpp"
 #include <unistd.h>
-#include "map.hpp"
-
+// #include "map.hpp"
+#include "containers_test/srcs/map/common.hpp"	
 
 #ifndef NAME_SPACE
 	#define NAME_SPACE_STR "STD"
@@ -23,119 +23,69 @@
 	using namespace ft;
 #endif
 
-#define TESTED_TYPE int
-#define t_stack_ stack<TESTED_TYPE>
-typedef ft::t_stack_::container_type container_type;
+#include <list>
 
-template <class T_STACK>
-void	cmp(const T_STACK &lhs, const T_STACK &rhs)
+#define T1 int
+#define T2 foo<int>
+
+typedef map<T1, T2>::value_type T3;
+typedef map<T1, T2>::iterator ft_iterator;
+typedef map<T1, T2>::const_iterator ft_const_iterator;
+
+static int iter = 0;
+
+template <typename MAP>
+void	ft_bound(MAP &mp, const T1 &param)
 {
-	static int i = 0;
+	ft_iterator ite = mp.end(), it[2];
+	_pair<ft_iterator, ft_iterator> ft_range;
 
-	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
-	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
-	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
-	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	std::cout << "with key [" << param << "]:" << std::endl;
+	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
+	ft_range = mp.equal_range(param);
+	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
+	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
+	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
 }
 
+template <typename MAP>
+void	ft_const_bound(const MAP &mp, const T1 &param)
+{
+	ft_const_iterator ite = mp.end(), it[2];
+	_pair<ft_const_iterator, ft_const_iterator> ft_range;
+
+	std::cout << "\t-- [" << iter++ << "] (const) --" << std::endl;
+	std::cout << "with key [" << param << "]:" << std::endl;
+	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
+	ft_range = mp.equal_range(param);
+	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
+	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
+	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
+}
 
 int		main(void)
 {
-	ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > > test2;
-	ft::map<int, char>	test;
+	std::list<T3> lst;
+	unsigned int lst_size = 10;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3(i + 1, (i + 1) * 3));
+	map<T1, T2> mp(lst.begin(), lst.end());
+	printSize(mp);
 
-	test.insert(ft::pair<int ,char >(6, 'c'));
-	test.insert(ft::pair<int ,char >(2, 'd'));
-	test.insert(ft::pair<int ,char >(3, 'e'));
-	test.insert(ft::pair<int ,char >(4, 'f'));
-	test.insert(ft::pair<int ,char >(5, 'g'));
-	test.insert(ft::pair<int ,char >(11, 'h'));
-	test.insert(ft::pair<int ,char >(8, 'i'));
-	test.insert(ft::pair<int ,char >(15, 'j'));
+	ft_const_bound(mp, -10);
+	ft_const_bound(mp, 1);
+	ft_const_bound(mp, 5);
+	ft_const_bound(mp, 10);
+	ft_const_bound(mp, 50);
 
-	const int t(6);
-	test.erase(t);
+	printSize(mp);
 
-	// std::cout << (test.upper_bound(1) == test.begin()) << "\n";
-	// std::cout << test.upper_bound(7)->first << "\n";
-	// std::cout << test.upper_bound(3)->first << "\n";
-	// std::cout << test.upper_bound(12)->first << "\n";
-	std::cout << test[2] << "\n";
-	test[20] = 'c';
-	std::cout << test[20] << "\n";
-	// std::cout << (test.upper_bound(18) == test.end() ? "true" : "false") << "\n";
-	// std::cout << ((*test.equal_range(3).second).first/*  == test.end() ? "true" : "false" */) << "\n";
-	// std::cout << (test.find(1) == test.end() ? "true" : "false") << "\n";
+	mp.lower_bound(3)->second = 404;
+	mp.upper_bound(7)->second = 842;
+	ft_bound(mp, 5);
+	ft_bound(mp, 7);
 
-
-
-	test.print();
-	test.clear();
-	// for (std::map<int, char>::iterator it = test.begin(); it != test.end(); it++)
-	// 	std::cout << it->first << std::endl;
-	// std::cout << "===================================" << std::endl;
-	// for (std::map<int, char>::iterator it = ++test.end(); it != test.begin(); it--)
-	// 	std::cout << it->first << std::endl;
-
-	// std::cout << (test.find(1) == test.begin() ? "found" : "not found") << std::endl;
-
-	// test2.insert(ft::pair<int, char>(6, 'c'));
-	// test2.insert(ft::pair<int, char>(2, 'd'));
-	// test2.insert(ft::pair<int, char>(2, 'd'));
-	// test2.insert(ft::pair<int, char>(3, 'e'));
-	// test2.insert(ft::pair<int, char>(4, 'f'));
-	// test2.insert(ft::pair<int, char>(5, 'g'));
-	// test2.insert(ft::pair<int, char>(11, 'h'));
-	// test2.insert(ft::pair<int, char>(8, 'i'));
-	// test2.insert(ft::pair<int, char>(15, 'j'));
-	// test2.insert(ft::pair<int, char>(16, 'j'));
-	// test2.insert(ft::pair<int, char>(17, 'j'));
-	// test2.insert(ft::pair<int, char>(18, 'j'));
-	// test2.insert(ft::pair<int, char>(19, 'j'));
-	// test2.insert(ft::pair<int, char>(20, 'j'));
-	// test2.insert(ft::pair<int, char>(21, 'j'));
-	// test2.insert(ft::pair<int, char>(22, 'j'));
-	// test2.insert(ft::pair<int, char>(23, 'j'));
-	// test2.insert(ft::pair<int, char>(24, 'j'));
-
-
-	// test2.print2D();
-
-
-	// for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = test2.begin(); it != test2.end(); it++)
-	// {
-	// 	// sleep(1);
-	// 	std::cout << it->first << std::endl;
-	// }
-	// std::cout << "===================================" << std::endl;
-	// for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = --test2.end(); it != test2.begin(); it--)
-	// {
-	// 	// sleep(1);
-	// 	std::cout << it->first << std::endl;
-	// }
-	// test2.insert(ft::pair<int, char>(25, 'j'));
-	// test2.erase(ft::pair<int, char>(21, 'j'));
-	// test2.insert(ft::pair<int, char>(26, 'j'));
-	// test2.insert(ft::pair<int, char>(27, 'j'));
-	// test2.insert(ft::pair<int, char>(28, 'j'));
-	// test2.insert(ft::pair<int, char>(29, 'j'));
-	// test2.insert(ft::pair<int, char>(29, 'j'));
-	// test2.insert(ft::pair<int, char>(30, 'j'));
-	// for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = test2.begin(); it != test2.end(); it++)
-	// {
-	// 	// sleep(1);
-	// 	std::cout << it->first << std::endl;
-	// }
-	// std::cout << "===================================" << std::endl;
-	// for (ft::Rb_tree<int, ft::pair<int, char>, std::less<ft::pair<char, int> > >::iterator it = --test2.end(); it != test2.begin(); it--)
-	// {
-	// 	// sleep(1);
-	// 	std::cout << it->first << std::endl;
-	// }
-	// std::cout << test2.size() << "\n";
-
-	// test2.clear();
-	// std::cout << test2.size() << "\n";
-	// test2.print2D();
+	printSize(mp);
 	return (0);
 }

@@ -53,27 +53,27 @@ namespace ft
 
 			template <class Tp, class Ctnr>
 				friend bool
-				operator== (const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
+				operator==(const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
 
 			template <class Tp, class Ctnr>
 				friend bool
-				operator!= (const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
+				operator!=(const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
 
 			template <class Tp, class Ctnr>
 				friend bool
-				operator<  (const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
+				operator<(const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
 
 			template <class Tp, class Ctnr>
 				friend bool
-				operator<= (const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
+				operator<=(const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
 
 			template <class Tp, class Ctnr>
 				friend bool
-				operator>  (const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
+				operator>(const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
 
 			template <class Tp, class Ctnr>
 				friend bool
-				operator>= (const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
+				operator>=(const stack<Tp,Ctnr>& lhs, const stack<Tp,Ctnr>& rhs);
 	};
 
 	template <class T, class Container>
