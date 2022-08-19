@@ -6,381 +6,303 @@
 /*   By: rbicanic <rbicanic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 13:07:06 by hbaudet           #+#    #+#             */
-/*   Updated: 2022/07/30 17:29:35 by rbicanic         ###   ########.fr       */
+/*   Updated: 2022/08/19 15:21:48 by rbicanic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "42TESTERS-CONTAINERS/test_utils.hpp"
 #include "vector.hpp"
 #include <vector>
+#include <cmath>
 
-#ifndef STD
+
+// #ifndef STD
 # define NAMESPACE ft
-#else
-# define NAMESPACE std
-#endif
+// #else
+// # define NAMESPACE std
+// #endif
 
 using namespace NAMESPACE;
 
-int main()
+template <class T>
+void	print(vector<vector<T> >& lst)
 {
-	vector<string> JOHN;
-	vector<string> BOB(5, "Hello");
-	cout << "BOB(5, 8) : ";
-	for (size_t i = 0; i < BOB.size(); i++)
-		cout << BOB[i] << ' ';
+	for (typename vector<vector<T> >::iterator it = lst.begin(); it != lst.end(); it++)
+	{
+		for (typename vector<T>::iterator it2 = it->begin(); it2 != it->end(); it2++)
+			cout << *it2 << ' ';
+		cout << '\n';
+	}
+}
+
+template <class T>
+void	print(vector<T>& lst)
+{
+	for (typename vector<T>::iterator it = lst.begin(); it != lst.end(); it++)
+		cout << *it << ' ';
 	cout << '\n';
-	vector<string> MIKE(BOB);
+}
+class Awesome {
 
-	// CTORs
-	cout << "\nCTORS\n";
-	cout << "Empty is empty ? " << std::boolalpha << JOHN.empty() << '\n';
-	cout << "BOB is empty? " << BOB.empty() << '\n';
+	public:
 
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
+		Awesome( void ) : _n( 42 ) { std::cout << "Default constructor" << std::endl; } //should not happen too often or else there is a wrong use of allocator (which calls the copy constructor)
+		Awesome( int n ) : _n( n ) { std::cout << "Int constructor" << std::endl; (void)n; }
+		Awesome( Awesome const &rhs ) : _n( 42 ) { *this = rhs;}
+		virtual ~Awesome(void) {}
 
+		Awesome &operator=( Awesome const & rhs ) { this->_n = rhs._n; return (*this); }
+		bool operator==( Awesome const & rhs ) const { return (this->_n == rhs._n); }
+		bool operator!=( Awesome const & rhs ) const { return (this->_n != rhs._n); }
+		bool operator>( Awesome const & rhs ) const { return (this->_n > rhs._n); }
+		bool operator<( Awesome const & rhs ) const { return (this->_n < rhs._n); }
+		bool operator>=( Awesome const & rhs ) const { return (this->_n >= rhs._n); }
+		bool operator<=( Awesome const & rhs ) const { return (this->_n <= rhs._n); }
+		void operator+=(int rhs){ _n += rhs; }
+		int get( void ) const { return this->_n; }
 
-	// RESIZE
-	size_t	bob_resize = 2;
-	cout << "\nRESIZE\n";
-	BOB.resize(bob_resize);
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 53\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= bob_resize)
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 58\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 63\n";
+	private:
 
-	size_t	mike_resize = 9;
-	bob_resize = 0;
-	
-	BOB.resize(bob_resize);
-	cout << "BOB is empty now ? " << BOB.empty() << '\n';
-	MIKE.resize(mike_resize, "juste some random string");
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 86\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= bob_resize)
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 91\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= mike_resize)
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 96\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+		int _n;
+};
 
-	// RESERVE
-	cout << "\nRESERVE\n";
+std::ostream & operator<<( std::ostream & o, Awesome const & rhs ) { o << rhs.get(); return o; }
 
-	size_t	john_reserve = 5;
-	size_t	bob_reserve = 3;
-	size_t	mike_reserve = 83;
+template <class T>
+void	print_vector(vector<T> &test)
+{
+	typename vector<T>::iterator		beg = test.begin();
+	typename vector<T>::iterator		end = test.end();
+	std::cout << "size : " << test.size() << ", capacity : " << test.capacity() << std::endl;
+	for (typename vector<T>::iterator it = beg; it != end; it++)
+	{
+		std::cout << *it << " ";
+		if (((it - beg) % 10 == 9) && it > beg)
+			std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
 
-	JOHN.reserve(john_reserve);
-	BOB.reserve(bob_reserve);
-	MIKE.reserve(mike_reserve);
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= john_reserve)
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 120\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= bob_reserve)
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 125\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= mike_reserve)
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 130\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+template <class T>
+void	push_pop_back_tests(void)
+{
+	std::cout << std::endl << "PUSH BACK & POP BACK TESTS" << std::endl;
+	vector<T> test;
 
-	//AT
-	cout << "\nAT\n";
+	std::cout << "Empty ? " << test.empty() << " / Capacity : " << test.capacity() << " / Size : " << test.size() << std::endl;
+	for (size_t i = 0; i < 51; i++)
+	{
+		test.push_back(i);
+		std::cout << test.size() << ": " << test.capacity() << " - ";
+		if (!(i % 10) && i != 0)
+			std::cout << std::endl;
+	}
+	print_vector<T>(test);
+	test.pop_back();
+	test.pop_back();
+	test.pop_back();
+	test.pop_back();
+	print_vector<T>(test);
+}
+
+template <class T>
+void	resize_tests(void)
+{
+	std::cout << std::endl << "RESIZE TESTS" << std::endl;
+	vector<T> test(12, 12);
+
+	test.resize(72);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.resize(100);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.resize(4170);
+
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.resize(171, 12);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.resize(62);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+}
+
+template <class T>
+void	insert_tests()
+{
+	std::cout << std::endl << "INSERT TESTS" << std::endl;
+	vector<T> test(1, 1);
+	vector<T> test2(5, 5);
+
+	test.insert(test.begin(), 200, 12);
+	print_vector<T>(test);
+	test.insert(test.begin() + 12, 200, 30);
+	print_vector<T>(test);
+	test.insert(test.end(), 12, 50);
+	print_vector<T>(test);
+	test.insert(test.end() - 1, 0, 60);
+	print_vector<T>(test);
+	test.insert(test.end() - 1, 1, 70);
+	print_vector<T>(test);
+	test.insert(test.begin() + 412, test2.begin(), test2.end());
+	print_vector<T>(test);
+	test.insert(test.begin() + 6, test2.begin(), test2.end());
+	print_vector<T>(test);
+	test.insert(test.end(), test2.begin(), test2.end());
+	print_vector<T>(test);
+}
+
+template <class T>
+void	reserve_tests(void)
+{
+	std::cout << std::endl << "RESERVE TESTS" << std::endl;
+	vector<T> test(65, 7);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(12);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(66);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(128);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(1023);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(10252);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
 	try
 	{
-		cout << MIKE.at(2) << '\n';
-		cout << MIKE.at(87) << '\n';
+		test.reserve(test.max_size() + 1);
 	}
-	catch (std::out_of_range& oor)
+	catch(std::length_error &le)
 	{
-		(void)oor;
-		cout << "OOR error caught\n";
+		std::cout << "length error" << std::endl;
 	}
-
-	// FRONT / BACK
-	cout << "\nFRONT / BACK\n";
-	cout << "front() of MIKE : " << MIKE.front() << '\n';
-	cout << "back() of MIKE : " << MIKE.back() << '\n';
-
-	//ASSIGN
-	cout << "\nASSIGN\n";
-	BOB.assign(42, "James BOND");
-
-	//ASSIGN RANGE
-	cout << "\nASSIGN RANGE\n";
-	vector<string>	assign_range;
-	assign_range.assign(8, "Covfefe");
-	assign_range.assign(BOB.begin() + 1, BOB.end() - 2);
-
-	//EMPTY
-	cout << "\nEMPTY\n";
-	cout << "BOB is empty ? " << BOB.empty() << '\n';
-	cout << "BOB at(41) : " << BOB.at(41) << '\n';
-
-	//PUSH/POP_BACK
-	cout << "\nPUSH/POP_BACK\n";
-	BOB.push_back("My name is Bond");
-	cout << "last elem of BOB : " << BOB.back() << '\n';
-	BOB.pop_back();
-	cout << "last elem of BOB : " << BOB.back() << '\n';
-
-	//INSERT
-	cout << "\nINSERT\n";
-	vector<string>	insert_in_me;
-	for (size_t i = 0; i < 15; i++)
-		insert_in_me.push_back(ft::to_string(i) + " I love hbaudet\n");
-	cout << "after push_back, before at\n";
-	for (size_t i = 0; i < insert_in_me.size(); i++)
-		cout << insert_in_me.at(i) << ' ';
-	cout << '\n';
-
-	vector<string>::iterator	tmp;
-	tmp = insert_in_me.begin() + 4;
-	insert_in_me.insert(tmp, 8, "Norminet");
-	for (size_t i = 0; i < insert_in_me.size(); i++)
-		cout << insert_in_me.at(i) << ' ';
-	cout << '\n';
-
-	vector<string>::const_iterator const_it(insert_in_me.begin());
-	cout << "Const it : " << std::endl;
-	cout << *const_it << '\n';
-//	*const_it = 89; // Does not compile because it's a const_iterator
-
-
-	//INSERT
-	cout << "\nINSERT\n";
-	vector<string>	std_insert_in_me;
-	for (size_t i = 0; i < 15; i++)
-		std_insert_in_me.push_back(ft::to_string(i) + " 42 ");
-	for (size_t i = 0; i < std_insert_in_me.size(); i++)
-		cout << std_insert_in_me.at(i) << ' ';
-	cout << '\n';
-
-	vector<string>::iterator	std_tmp;
-	std_tmp = std_insert_in_me.begin() + 4;
-	std_insert_in_me.insert(std_tmp, 8, "Why are you reading this!?");
-	for (size_t i = 0; i < std_insert_in_me.size(); i++)
-		cout << std_insert_in_me.at(i) << ' ';
-	cout << '\n';
-
-
-	//INSERT RANGE
-	cout << "\nINSERT RANGE\n";
-	vector<string>	insert_bis;
-	for (size_t i = 0; i < 7; i++)
-		insert_bis.push_back(ft::to_string(3 * i));
-	for (size_t i = 0; i < insert_bis.size(); i++)
-		cout << insert_bis[i] << ' ';
-	cout << '\n';
-
-	insert_bis.insert(insert_bis.begin() + 5, insert_in_me.begin(), insert_in_me.end());
-	for (size_t i = 0; i < insert_bis.size(); i++)
-		cout << insert_bis[i] << ' ';
-	cout << '\n';
-
-
-	//ERASE
-	cout << "\nERASE\n";
-	vector<string>	erase_in_me;
-	for (size_t i = 0; i < 15; i++)
-		erase_in_me.push_back(ft::to_string(2 * i));
-	for (size_t i = 0; i < erase_in_me.size(); i++)
+	catch(std::exception &e)
 	{
-//		if (erase_in_me[i] < 10)
-//			cout << ' ';
-		cout << erase_in_me.at(i) << ' ';
+		std::cout << "error : " << e.what() << std::endl;
 	}
-	cout << '\n';
+	print_vector<T>(test);
+}
 
-	erase_in_me.erase(erase_in_me.begin() + 7);
-	for (size_t i = 0; i < erase_in_me.size(); i++)
+template <class T>
+void	copy_swap_tests(void)
+{
+	std::cout << std::endl << "COPY && SWAP TESTS" << std::endl;
+	vector<T> test;
+	for (size_t i = 0; i < 50; i++) { test.push_back(i); }
+	vector<T> test_copy(test);
+	for (size_t i = 0; i < test_copy.size(); i++) { test_copy[i] += 100; }
+	print_vector<T>(test_copy);
+	vector<T> test_range(test.begin() + 20, test.begin() + 30);
+	print_vector<T>(test_range);
+	test_copy.swap(test);
+	print_vector<T>(test);
+	print_vector<T>(test_copy);
+	test_copy.swap(test_range);
+	print_vector<T>(test_range);
+	print_vector<T>(test_copy);
+	test.swap(test_copy);
+	print_vector<T>(test);
+	print_vector<T>(test_copy);
+}
+
+template <class T>
+void	reverse_it_tests(void)
+{
+	std::cout << std::endl << "REVERSE IT TESTS" << std::endl;
+	vector<T> test;
+	for (size_t i = 0; i < 12; i++) { test.push_back(i); }
+	typename vector<T>::reverse_iterator		revbeg = test.rbegin();
+	for (typename vector<T>::reverse_iterator it = revbeg; it != test.rend(); it++)
 	{
-//		if (erase_in_me[i] < 10)
-//			cout << ' ';
-		cout << erase_in_me.at(i) << ' ';
+		std::cout << *it << " ";
+		if (!((revbeg - it) % 10) && it != revbeg)
+			std::cout << std::endl;
 	}
-	cout << '\n';
+	std::cout << *(test.rbegin() + 2) << std::endl;
+	std::cout << *(test.rend() - 8) << std::endl;
+	std::cout << (test.rbegin() == revbeg) << std::endl;
+	revbeg++;
+	std::cout << *revbeg << std::endl;
+	std::cout << (test.rbegin() == test.rend()) << std::endl;
+	std::cout << (test.rbegin() <= test.rbegin()) << std::endl;
+	std::cout << (test.rbegin() < test.rend()) << std::endl;
+	std::cout << (test.rbegin() >= test.rend()) << std::endl;
+	revbeg += 3;
+	std::cout << *revbeg << std::endl;
+	std::cout << std::endl;
+}
 
-	erase_in_me.erase(erase_in_me.begin() + 2, erase_in_me.begin() + 6);
-	for (size_t i = 0; i < erase_in_me.size(); i++)
-	{
-//		if (erase_in_me[i] < 10)
-//			cout << ' ';
-		cout << erase_in_me.at(i) << ' ';
-	}
-	cout << '\n';
+template <class T>
+void	erase_clear_tests(void)
+{
+	std::cout << std::endl << "ERASE && CLEAR TESTS" << std::endl;
+	vector<T> test(31, 12);
+	test.erase(test.begin(), test.begin() + 5);
+	print_vector<T>(test);
+	test.erase(test.begin() + 12, test.begin() + 16);
+	print_vector<T>(test);
+	test.clear();
+	print_vector<T>(test);
+}
 
-	//SWAP
-	cout << "\nSWAP\n";
-	BOB.swap(MIKE);
-	/*
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 272\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 277\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 282\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+void	max_size_tests(void)
+{
+	std::cout << std::endl << "MAX SIZE TESTS" << std::endl;
+	vector<int> test(31, 12);
+	vector<std::string> test2;
+	vector<long long int> test3;
+	vector<Awesome> test4;
+	vector<unsigned int> test5(12, 340);
+	std::cout << test.max_size() << std::endl;
+	std::cout << test2.max_size() << std::endl;
+	std::cout << test3.max_size() << std::endl;
+	std::cout << test4.max_size() << std::endl;
+	std::cout << test5.max_size() << std::endl;
+}
 
-	MIKE.swap(JOHN);
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 298\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 303\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 308\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+void	awesome_tests(void)
+{
+	std::cout << std::endl << "AWESOME TESTS" << std::endl;
+	vector<Awesome> test(21, 12);
+	print_vector<Awesome>(test);
+	vector<Awesome> test2;
+	print_vector<Awesome>(test2);
+	test2.push_back(12);
+	test2.push_back(8);
+	test2.push_back(16);
+	print_vector<Awesome>(test2);
+	std::cout << "SAME ?" << (test.begin() + 1 == test2.begin() + 1) << std::endl;
+	test.assign(test2.begin(), test2.end());
+	print_vector<Awesome>(test);
+	test = test2;
+	print_vector<Awesome>(test);
+	std::cout << "SAME ?" << (test.begin() + 1 == test2.begin() + 1) << std::endl;
+	test.insert(test.end(), test2.begin(), test2.end());
+	print_vector<Awesome>(test);
+	test.insert(test.begin(), test2.begin(), test2.end());
+	test2 = test;
+	print_vector<Awesome>(test);
+	std::cout << "end awesome test" << std::endl;
+}
 
-	//CLEAR
-	cout << "\nCLEAR\n";
-	JOHN.clear();
-	MIKE.clear();
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 327\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 332\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 337\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+int main()
+{
+	// push_pop_back_tests<int>();
+	resize_tests<int>();
 
-	//NON MEMBER Functions
-	cout << "\nNON MEMBER functions\n";
-	swap(BOB, MIKE);
-	/*
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 355\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 360\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 365\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
-	
-	//RELATIONAL OPERATORS
-	cout << "\nRELATIONAL OPERATORS\n";
-	vector<string> MIKE_2(MIKE);
-	cout << "MIKE and BOB are equal ? " << (MIKE == BOB) << '\n';
-	cout << "MIKE and MIKE_2 are equal ? " << (MIKE == MIKE_2) << '\n';
+	std::cout << 144 * std::ceil((double)4170 / 144) << std::endl; 
+	// insert_tests<int>();
+	// reserve_tests<int>();
+	// copy_swap_tests<int>();
+	// reverse_it_tests<int>();
+	// erase_clear_tests<int>();
+	// max_size_tests();
+	// awesome_tests();
+	// push_pop_back_tests<Awesome>();
+	// resize_tests<Awesome>();
+	// insert_tests<Awesome>();
 
-	vector<string> real;
-	real.assign(5, "foo");
-	for (vector<string>::iterator it = real.begin(); it != real.end(); it++)
-		cout << *it << " ";
-	cout << '\n';
+	// reserve_tests<Awesome>();
+	// copy_swap_tests<Awesome>();
 
-	cout << std::endl;
+	// reverse_it_tests<Awesome>();
+	// erase_clear_tests<Awesome>();
 	return (0);
 }

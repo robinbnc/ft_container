@@ -180,6 +180,7 @@ namespace ft
 			if (n > m_alloc_size)
 			{
 				int	new_allocate_size = (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
+
 				T	*new_ptr = m_allocator.allocate(new_allocate_size);
 
 				for(size_type i = 0; i < n; i++)
@@ -224,16 +225,20 @@ namespace ft
 				throw std::length_error("vector::reserve");
 			if (n <= m_alloc_size)
 				return ;
+
+			size_type save_el_nbr = m_element_number;
 			int	new_allocate_size = (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
 			T	*new_ptr = m_allocator.allocate(new_allocate_size);
 			
 			for(size_type i = 0; i < m_element_number; i++)
 			{
 				if (i < m_element_number)
-					m_allocator.construct(new_ptr + i, *(m_ptr + i));
+					m_allocator.construct(new_ptr + i, m_ptr[i]);
 			}
-			m_allocator.deallocate(m_ptr, m_element_number);
+			this->clear();
+			m_allocator.deallocate(m_ptr, m_alloc_size);
 			m_alloc_size = new_allocate_size;
+			m_element_number = save_el_nbr;
 			m_ptr = new_ptr;
 		}
 
@@ -407,13 +412,15 @@ namespace ft
 		iterator
 		erase (iterator first, iterator last)
 		{
-			size_type	index_first = first - this->begin();
-			size_type	index_last = last - this->begin();
+			iterator	tmp = first;
 
-			for (size_t i = 0; index_last + i < m_element_number; i++)
-				m_ptr[index_first + i] = m_ptr[index_last + i];
-			for (size_type i = last - first; i < m_element_number; i++)
-				m_allocator.destroy(&m_ptr[index_first + i]);
+			for (iterator it = last; it != end(); it++)
+			{
+				*tmp = *it;
+				tmp++;
+			}
+			for (int i = 1; i <= last - first; i++)
+				m_allocator.destroy(&m_ptr[m_element_number - i]);
 			m_element_number -= last - first;
 			return (first);
 		}
