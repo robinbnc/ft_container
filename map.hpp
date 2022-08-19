@@ -303,6 +303,13 @@ namespace ft
 			operator>=(const map<Key, Tp, Compare, Alloc>& x,
 			const map<Key, Tp, Compare, Alloc>& y)
 			{ return !(x < y); }
+		
+
+		template <class Key, class T, class Compare, class Alloc>
+			void
+			swap(map<Key, T, Compare, Alloc>& x,
+					map<Key, T, Compare, Alloc>& y)
+			{ x.swap(y); }
 }
 
 #endif

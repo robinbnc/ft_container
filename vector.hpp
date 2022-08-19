@@ -13,6 +13,7 @@
 # include "lexicographical_compare.hpp"
 # include "iterator.hpp"
 # include "reverse_iterator.hpp"
+#include <iostream>
 
 namespace ft
 {
@@ -65,7 +66,7 @@ namespace ft
 				for (InputIterator it = first; it  != last; it++)
 					range_len++;
 				if (range_len > this->max_size())
-					throw std::length_error("Error: allocation over max size\n");
+					throw std::length_error("vector::reserve");
 				m_element_number = range_len;
 				m_alloc_size = range_len;
 				m_ptr = m_allocator.allocate(m_alloc_size);
@@ -79,6 +80,7 @@ namespace ft
 		vector(const vector<T,Allocator>& x)
 		{
 			size_type	size_x = x.size();
+
 			if (this == &x)
 				return ;
 			m_ptr = m_allocator.allocate(size_x);
@@ -90,7 +92,7 @@ namespace ft
 		}
 
 		vector<T>
-		&operator=( vector<T> &a )// maybe cont le vector
+		&operator=( const vector<T> &a )// maybe cont le vector
 		{
 			size_type	size_a = a.size();
 
@@ -99,7 +101,12 @@ namespace ft
 			if (size_a > m_alloc_size)
 				this->reserve(size_a);
 			for (size_type i = 0; i < size_a; i++)
-				m_ptr[i] = a[i];
+			{
+				if (i < m_element_number)
+					m_ptr[i] = a[i];
+				else
+					m_allocator.construct(m_ptr + i, a[i]);
+			}
 			m_element_number = size_a;
 			return (*this);
 		}
@@ -169,7 +176,7 @@ namespace ft
 			// check negative n
 			// exception quand max size atteint
 			if (n > this->max_size())
-				throw std::length_error("Error: allocation over max size\n");
+				throw std::length_error("vector::reserve");
 			if (n > m_alloc_size)
 			{
 				int	new_allocate_size = (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
@@ -214,7 +221,7 @@ namespace ft
 		reserve( size_type n )
 		{
 			if (n > this->max_size())
-				throw std::length_error("Error: allocation over max size\n");
+				throw std::length_error("vector::reserve");
 			if (n <= m_alloc_size)
 				return ;
 			int	new_allocate_size = (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
@@ -306,11 +313,14 @@ namespace ft
 		{
 			this->clear();
 			if (n > m_alloc_size)
+			{
 				this->resize(n, val);
+				return ;
+			}
 			else
 				m_element_number = n;
 			for (size_type i = 0; i < n; i++)
-				m_ptr[i] = val;
+				m_allocator.construct( m_ptr + i, val );
 		}
 
 		iterator
@@ -318,6 +328,7 @@ namespace ft
 		{
 			vector<T>	tmp(position, this->end());
 			size_type	index = position - this->begin();
+			size_type	tmp_i = index;
 
 			if (m_alloc_size == m_element_number)
 				resize(m_element_number + 1);
@@ -325,8 +336,8 @@ namespace ft
 				m_element_number++;
 			m_ptr[index] = val;
 			for (size_type i = 0; ++index < m_element_number; i++)
-				m_ptr[index] = tmp[i];
-			return (position);
+				m_ptr[index] = tmp[i];			 
+			return (begin() - tmp_i);
 		}
 
 		void
@@ -383,12 +394,12 @@ namespace ft
 		{
 			size_type	index = position - this->begin();
 
-			m_allocator.destroy(&m_ptr[index]);
 			while (index < m_element_number - 1)
 			{
 				m_ptr[index] = m_ptr[index + 1];
 				index++;
 			}
+			m_allocator.destroy(&m_ptr[index]);
 			m_element_number--;
 			return (position);
 		}
