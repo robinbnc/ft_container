@@ -211,8 +211,8 @@ namespace ft
 				{
 					const_iterator to_find = iterator(m_tree.find(k));
 
-					if (to_find != end()
-						&& to_find->first != k)
+					if (empty() || (to_find != end()
+						&& to_find->first != k))
 						return (end());
 					return (to_find); 
 				}

@@ -63,7 +63,7 @@ namespace ft
 			: m_allocator(allocator), m_ptr(NULL) {
 				size_type		range_len = 0;
 
-				for (InputIterator it = first; it  != last; it++)
+				for (InputIterator it = first; it != last; it++)
 					range_len++;
 				if (range_len > this->max_size())
 					throw std::length_error("vector::reserve");
@@ -98,15 +98,11 @@ namespace ft
 
 			if (this == &a)
 				return (*this);
+			clear();
 			if (size_a > m_alloc_size)
 				this->reserve(size_a);
 			for (size_type i = 0; i < size_a; i++)
-			{
-				if (i < m_element_number)
-					m_ptr[i] = a[i];
-				else
-					m_allocator.construct(m_ptr + i, a[i]);
-			}
+				m_allocator.construct(m_ptr + i, a[i]);
 			m_element_number = size_a;
 			return (*this);
 		}
@@ -179,7 +175,11 @@ namespace ft
 				throw std::length_error("vector::reserve");
 			if (n > m_alloc_size)
 			{
-				int	new_allocate_size = (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
+				int	new_allocate_size; //= (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
+				if (m_alloc_size != 0 && n / m_alloc_size < 2)
+					new_allocate_size = m_alloc_size * std::ceil((double)n / m_alloc_size);
+				else
+					new_allocate_size = n;
 
 				T	*new_ptr = m_allocator.allocate(new_allocate_size);
 
@@ -226,8 +226,12 @@ namespace ft
 			if (n <= m_alloc_size)
 				return ;
 
-			size_type save_el_nbr = m_element_number;
-			int	new_allocate_size = (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
+			size_type save_el_nbr = m_element_number;//MAZOISE ICI
+			int	new_allocate_size; //= (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
+			if (m_alloc_size != 0 && n / m_alloc_size < 2)
+				new_allocate_size = m_alloc_size * std::ceil((double)n / m_alloc_size);
+			else
+				new_allocate_size = n;
 			T	*new_ptr = m_allocator.allocate(new_allocate_size);
 			
 			for(size_type i = 0; i < m_element_number; i++)
@@ -299,16 +303,15 @@ namespace ft
 			{
 				size_type		range_len = 0;
 
-				for (InputIterator it = first; it  != last; it++)
+				for (InputIterator it = first; it != last; it++)
 					range_len++;
 				this->clear();
 				if (m_alloc_size < range_len)
-					this->resize(range_len);
-				else
-					m_element_number = range_len;
+					this->reserve(range_len);
+				m_element_number = range_len;
 				for (size_type i = 0; first != last; first++)
 				{
-					m_ptr[i] = *first;
+					m_allocator.construct( m_ptr + i, *first );
 					i++;
 				}
 			}
@@ -335,14 +338,22 @@ namespace ft
 			size_type	index = position - this->begin();
 			size_type	tmp_i = index;
 
+			size_type	save_el_nbr = m_element_number;
+
 			if (m_alloc_size == m_element_number)
+			{
 				resize(m_element_number + 1);
+				save_el_nbr = -1;
+			}
 			else
 				m_element_number++;
-			m_ptr[index] = val;
+			if (index < save_el_nbr)
+				m_ptr[index] = val;
+			else
+				m_allocator.construct( m_ptr + index, val );
 			for (size_type i = 0; ++index < m_element_number; i++)
-				m_ptr[index] = tmp[i];			 
-			return (begin() - tmp_i);
+				m_ptr[index] = tmp[i];
+			return (begin() + tmp_i);
 		}
 
 		void
@@ -351,18 +362,29 @@ namespace ft
 			vector<T>	tmp(position, this->end());
 			size_type	index = position - this->begin();
 
+			size_type	save_el_nbr = m_element_number;
+
 			if (m_alloc_size < m_element_number + n)
+			{
 				resize(m_element_number + n);
+				save_el_nbr = -1;
+			}
 			else
 				m_element_number += n;
 			for (size_type i = 0; i < n; i++)
 			{
-				m_ptr[index] = val;
+				if (index < save_el_nbr)
+					m_ptr[index] = val;
+				else
+					m_allocator.construct( m_ptr + index, val );
 				index++;
 			}
 			for (size_type i = 0; index < m_element_number; i++)
 			{
-				m_ptr[index] = tmp[i];
+				if (index < save_el_nbr)
+					m_ptr[index] = tmp[i];
+				else
+					m_allocator.construct( m_ptr + index, tmp[i] );
 				index++;
 			}
 		}

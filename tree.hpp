@@ -731,7 +731,7 @@ namespace ft
 					this->m_header->m_color		= _rb_red;
 					this->m_header->m_value		= NULL;
 					this->m_header->m_parent	= NULL;
-					this->m_begin->m_parent		= m_header->m_end;
+					this->m_begin->m_parent		= m_end;
 					this->m_end->m_parent		= NULL;
 					this->m_header->m_left		= m_begin;
 					this->m_header->m_right		= m_end;
