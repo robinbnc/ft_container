@@ -21,7 +21,7 @@ namespace ft
 			typedef typename ft::iterator_traits<Iter>::pointer       		pointer;
 			typedef typename ft::iterator_traits<Iter>::reference     		reference;
 
-            reverse_iterator(void)
+			reverse_iterator(void)
 			: m_current()
 			{}
 
@@ -32,11 +32,11 @@ namespace ft
 			reverse_iterator(const reverse_iterator& vector_it)
 			: m_current(vector_it.m_current)
 			{}
-			
+
 			template<typename _Iter>
-	        reverse_iterator(const reverse_iterator<_Iter>& x)
-		    : m_current(x.base())
-			{}
+				reverse_iterator(const reverse_iterator<_Iter>& x)
+				: m_current(x.base())
+				{}
 
 			virtual ~reverse_iterator() {}
 
@@ -73,10 +73,10 @@ namespace ft
 
 			reverse_iterator
 			operator++(int)
-			{ 
+			{
 				reverse_iterator tmp = *this;
 				--m_current;
-				return (tmp);	
+				return (tmp);
 			}
 
 			reverse_iterator&

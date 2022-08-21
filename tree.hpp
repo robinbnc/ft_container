@@ -9,10 +9,6 @@
 # include "lexicographical_compare.hpp"
 # include "equal.hpp"
 
-# define COUNT 10
-# define RED "\x1b[31;1m"
-# define RESET "\x1b[0m"
-
 
 namespace ft
 {
@@ -44,8 +40,8 @@ namespace ft
 				m_ptr			tmp_left	= m_left ;
 				m_ptr			tmp_right	= m_right ;
 
-				m_parent	= a.m_parent; 
-				m_left		= a.m_left; 
+				m_parent	= a.m_parent;
+				m_left		= a.m_left;
 				m_right		= a.m_right;
 
 				a.m_parent	= tmp_parent;
@@ -182,7 +178,7 @@ namespace ft
 				{ return (*m_node->m_value); }
 
 				pointer
-				operator->() const // pas sur du tout recheck
+				operator->() const
 				{ return ((m_node)->m_value); }
 
 				_Self&
@@ -293,7 +289,7 @@ namespace ft
 					{ return (*m_node->m_value); }
 
 					pointer
-					operator->() const // pas sur du tout recheck
+					operator->() const
 					{ return ((m_node)->m_value); }
 
 					_Self&
@@ -385,7 +381,7 @@ namespace ft
 							const Rb_tree_const_iterator<Val>& y)
 				{ return x._M_node != y._M_node; }
 
-		template<typename Key, typename Val/* Pair */,
+		template<typename Key, typename Val,
 				typename Compare, typename Alloc = std::allocator<Val> >
 		class Rb_tree
 		{
@@ -608,7 +604,6 @@ namespace ft
 						m_val_allocator.deallocate(node->m_value, 1);
 						m_node_allocator.destroy(node);
 						m_node_allocator.deallocate(node, 1);
-						// delete node;
 					}
 				}
 
@@ -649,8 +644,6 @@ namespace ft
 							m_val_allocator.deallocate(v->m_value, 1);
 							v->m_value = u->m_value;
 							v->m_left = v->m_right = NULL;
-							// m_node_allocator.destroy(u);
-							// m_node_allocator.deallocate(u, 1);
 							delete (u);
 						}
 						else
@@ -673,32 +666,6 @@ namespace ft
 				}
 
 			public:
-				void print2DUtil(tree_node *root, int space)
-				{
-					if (root == NULL)
-						return;
-
-					space += COUNT;
-					print2DUtil(root->m_right, space);
-					std::cout<< std::endl;
-					for (int i = COUNT; i < space; i++)
-						std::cout<<" ";
-					(root->m_color == _rb_red)
-					? std::cout << RED
-					: std::cout << RESET;
-					if (root->m_value != NULL)
-						std::cout<< *root->m_value <<"\n";
-					else
-						std::cout<< "NODE" <<"\n";
-					std::cout << RESET;
-					print2DUtil(root->m_left, space);
-				}
-
-				void print2D()
-				{
-					this->print2DUtil(_M_get_root(), 0);
-				}
-
 				Rb_tree()
 				: m_node_count(0)
 				{
@@ -813,9 +780,8 @@ namespace ft
 					a.m_end				= tmp_end;
 					a.m_begin			= tmp_begin;
 				}
+
 				// _ITERATORS_ || MANQUE LES CONST ITERATORS
-
-
 				iterator
 				begin()
 				{ return (m_node_count ? iterator(m_header->m_left->m_parent) : end()); }
@@ -860,7 +826,6 @@ namespace ft
 				size_type
 				max_size() const
 				{ return (m_node_allocator.max_size()); }
-
 
 				// __Modifiers__
 				ft::pair<iterator, bool>
@@ -1126,17 +1091,16 @@ namespace ft
 				return (x.size() == y.size()
 					&& ft::equal(x.begin(), x.end(), y.begin()));
 			}
-	
+
 		template<typename Key, typename Val,
 		typename Compare, typename Alloc>
 			inline bool
 			operator<(const Rb_tree<Key, Val, Compare, Alloc>& x,
 				const Rb_tree<Key, Val, Compare, Alloc>& y)
 			{
-				return (ft::lexicographical_compare(x.begin(), x.end(), 
+				return (ft::lexicographical_compare(x.begin(), x.end(),
 						y.begin(), y.end()));
 			}
-
 }
 
 #endif

@@ -53,12 +53,12 @@ namespace ft
 
 				map()
 				: m_tree() { }
-			
+
 				explicit
 				map(const key_compare& comp,
 				const allocator_type& a = allocator_type())
 				: m_tree(comp, a) { }
-			
+
 				map(const map& x)
 				: m_tree(x.m_tree) { }
 
@@ -159,7 +159,7 @@ namespace ft
 				void
 				erase(iterator position)
 				{ m_tree.erase(position->first); }
-	
+
 				size_type
 				erase(const key_type& k)
 				{ return (m_tree.erase(k)); }
@@ -203,7 +203,7 @@ namespace ft
 						|| (to_find != end()
 						&& to_find->first != k))
 						return (end());
-					return (to_find); 
+					return (to_find);
 				}
 
 				const_iterator
@@ -214,8 +214,9 @@ namespace ft
 					if (empty() || (to_find != end()
 						&& to_find->first != k))
 						return (end());
-					return (to_find); 
+					return (to_find);
 				}
+
 				size_type
 				count(const key_type& k) const
 				{ return (find(k) == end() ? 0 : 1); }
@@ -251,11 +252,6 @@ namespace ft
 				get_allocator() const
 				{ return (m_tree.get_allocator()); }
 
-				// __DEBUG!!!__
-				void
-				print (void)
-				{ m_tree.print2D(); }
-
 				template<typename Key_, typename Tp_, typename Compare_, typename Alloc_>
 					friend inline bool
 					operator==(const map<Key_, Tp_, Compare_, Alloc_>& x,
@@ -273,37 +269,37 @@ namespace ft
 			operator==(const map<Key, Tp, Compare, Alloc>& x,
 			const map<Key, Tp, Compare, Alloc>& y)
 			{ return (x.m_tree == y.m_tree); }
-		
+
 		template<typename Key, typename Tp, typename Compare, typename Alloc>
 			inline bool
 			operator<(const map<Key, Tp, Compare, Alloc>& x,
 			const map<Key, Tp, Compare, Alloc>& y)
 			{ return (x.m_tree < y.m_tree); }
-		
+
 		template<typename Key, typename Tp, typename Compare, typename Alloc>
 			inline bool
 			operator!=(const map<Key, Tp, Compare, Alloc>& x,
 			const map<Key, Tp, Compare, Alloc>& y)
 			{ return !(x == y); }
-		
+
 		template<typename Key, typename Tp, typename Compare, typename Alloc>
 			inline bool
 			operator>(const map<Key, Tp, Compare, Alloc>& x,
 			const map<Key, Tp, Compare, Alloc>& y)
 			{ return (y < x); }
-		
+
 		template<typename Key, typename Tp, typename Compare, typename Alloc>
 			inline bool
 			operator<=(const map<Key, Tp, Compare, Alloc>& x,
 			const map<Key, Tp, Compare, Alloc>& y)
 			{ return !(y < x); }
-		
+
 		template<typename Key, typename Tp, typename Compare, typename Alloc>
 			inline bool
 			operator>=(const map<Key, Tp, Compare, Alloc>& x,
 			const map<Key, Tp, Compare, Alloc>& y)
 			{ return !(x < y); }
-		
+
 
 		template <class Key, class T, class Compare, class Alloc>
 			void

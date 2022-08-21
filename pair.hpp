@@ -24,7 +24,7 @@ namespace ft
 				pair(const pair<U1, U2> &copy)
 				: first(copy.first), second(copy.second)
 				{ }
-			
+
 			pair&
 			operator=(const pair& pr)
 			{
@@ -47,18 +47,18 @@ namespace ft
 			inline bool
 			operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
 			{ return (lhs.first == rhs.first && lhs.second == rhs.second); }
-			
+
 		template <class T1, class T2>
 			inline bool
 			operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
 			{ return !(lhs == rhs); }
-			
+
 		template <class T1, class T2>
 			inline bool
 			operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
 			{ return (lhs.first < rhs.first
 					|| (!(rhs.first < lhs.first) && lhs.second < rhs.second)); }
-			
+
 		template <class T1, class T2>
 			inline bool
 			operator>  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
@@ -78,20 +78,6 @@ namespace ft
 			inline pair<T1, T2>
 			make_pair(T1 x, T2 y)
 			{ return pair<T1, T2>(x, y); }
-	
-	
-	// A DELETE
-		template <class T1, class T2>		
-			std::ostream
-			&operator<<( std::ostream &flux, const pair<T1, T2> &pair )
-			{
-				flux << "[";
-				flux << pair.first;
-				flux << " , ";
-				flux << pair.second;
-				flux << "]";
-				return (flux);
-			}
 }
 
 #endif

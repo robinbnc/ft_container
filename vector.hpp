@@ -3,7 +3,6 @@
 
 # include <memory>
 # include <limits>
-# include <cmath>
 # include <vector>
 # include <exception>
 # include <cstddef>
@@ -13,7 +12,6 @@
 # include "lexicographical_compare.hpp"
 # include "iterator.hpp"
 # include "reverse_iterator.hpp"
-#include <iostream>
 
 namespace ft
 {
@@ -32,14 +30,13 @@ namespace ft
 			typedef typename Allocator::pointer 			pointer;
 			typedef typename Allocator::const_pointer		const_pointer;
 			typedef std::size_t								size_type;
-			typedef std::ptrdiff_t							difference_type;			
+			typedef std::ptrdiff_t							difference_type;
 			typedef T 										value_type;
 			typedef Allocator 								allocator_type;
 			typedef ft::vector_iterator<value_type>			iterator;
 			typedef ft::vector_iterator<const value_type>	const_iterator;
 			typedef ft::reverse_iterator<iterator> 			reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator> 	const_reverse_iterator;
-		
 
 		/*
 		**		__CONSTRUCTOR__
@@ -47,7 +44,7 @@ namespace ft
 
 		vector(const Allocator& allocator = Allocator())
 		: m_allocator(allocator), m_element_number(0), m_alloc_size(0), m_ptr(0) {}
-		
+
 		explicit vector(size_type n, const value_type& value = value_type(),
 			const allocator_type& allocator = allocator_type())
 		: m_allocator(allocator), m_element_number(n), m_alloc_size(n), m_ptr(0)
@@ -92,7 +89,7 @@ namespace ft
 		}
 
 		vector<T>
-		&operator=( const vector<T> &a )// maybe cont le vector
+		&operator=( const vector<T> &a )
 		{
 			size_type	size_a = a.size();
 
@@ -165,12 +162,10 @@ namespace ft
 		inline size_type
 		max_size( void ) const
 		{ return (m_allocator.max_size()); }
-		
+
 		void
 		resize (size_type n, value_type val = value_type())
 		{
-			// check negative n
-			// exception quand max size atteint
 			if (n > this->max_size())
 				throw std::length_error("vector::reserve");
 			if (n > m_alloc_size)
@@ -216,11 +211,11 @@ namespace ft
 		inline size_type
 		capacity( void ) const
 		{ return (m_alloc_size); }
-		
+
 		inline bool
 		empty( void ) const
 		{ return (m_element_number == 0 ? true : false); }
-		
+
 		void
 		reserve( size_type n )
 		{
@@ -231,13 +226,13 @@ namespace ft
 
 			size_type save_el_nbr = m_element_number;
 			int	new_allocate_size;
-	
+
 			if (m_alloc_size != 0 && n / m_alloc_size < 2 && n >= size() * 2)
 				new_allocate_size = m_alloc_size * 2;
 			else
 				new_allocate_size = n;
 			T	*new_ptr = m_allocator.allocate(new_allocate_size);
-			
+
 			for(size_type i = 0; i < m_element_number; i++)
 			{
 				if (i < m_element_number)
@@ -266,7 +261,7 @@ namespace ft
 			{
 				std::ostringstream error_msg;
 				error_msg << "vector::range_check: n (which is " << n << ") >= this->size() (which is " << m_element_number << ")";
-				throw std::out_of_range(error_msg.str());//exceptions out of range a modif
+				throw std::out_of_range(error_msg.str());
 			}
 			return ((*this)[n]);
 		}
@@ -278,7 +273,7 @@ namespace ft
 			{
 				std::ostringstream error_msg;
 				error_msg << "vector::range_check: n (which is " << n << ") >= this->size() (which is " << m_element_number << ")";
-				throw std::out_of_range(error_msg.str());//exceptions out of range a modif
+				throw std::out_of_range(error_msg.str());
 			}
 			return ((*this)[n]);
 		}
@@ -286,15 +281,15 @@ namespace ft
 		reference
 		front()
 		{ return ((*this)[0]); }
-		
+
 		const_reference
 		front() const
 		{ return ((*this)[0]); }
-		
+
 		reference
 		back()
 		{ return ((*this)[m_element_number - 1]); }
-		
+
 		const_reference
 		back() const
 		{ return ((*this)[m_element_number - 1]); }
@@ -523,17 +518,17 @@ namespace ft
 		bool
 		operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 		{ return (!(lhs == rhs)); }
-	
+
 	template <class T, class Alloc>
 		bool
 		operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 		{ return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())); }
-	
+
 	template <class T, class Alloc>
 		bool
 		operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 		{ return (!ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end())); }
-	
+
 	template <class T, class Alloc>
 		bool
 		operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
