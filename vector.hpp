@@ -175,9 +175,12 @@ namespace ft
 				throw std::length_error("vector::reserve");
 			if (n > m_alloc_size)
 			{
-				int	new_allocate_size; //= (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
-				if (m_alloc_size != 0 && n / m_alloc_size < 2)
-					new_allocate_size = m_alloc_size * std::ceil((double)n / m_alloc_size);
+				int	new_allocate_size;
+
+				if (m_alloc_size != 0 && n < size() * 2 && n / m_alloc_size < 2)
+					new_allocate_size = size() * 2;
+				else if (m_alloc_size != 0 && n / m_alloc_size < 2)
+					new_allocate_size = m_alloc_size * 2;
 				else
 					new_allocate_size = n;
 
@@ -226,10 +229,11 @@ namespace ft
 			if (n <= m_alloc_size)
 				return ;
 
-			size_type save_el_nbr = m_element_number;//MAZOISE ICI
-			int	new_allocate_size; //= (m_alloc_size != 0) ? m_alloc_size * std::ceil((double)n / m_alloc_size) : n;
-			if (m_alloc_size != 0 && n / m_alloc_size < 2)
-				new_allocate_size = m_alloc_size * std::ceil((double)n / m_alloc_size);
+			size_type save_el_nbr = m_element_number;
+			int	new_allocate_size;
+	
+			if (m_alloc_size != 0 && n / m_alloc_size < 2 && n >= size() * 2)
+				new_allocate_size = m_alloc_size * 2;
 			else
 				new_allocate_size = n;
 			T	*new_ptr = m_allocator.allocate(new_allocate_size);
@@ -342,7 +346,7 @@ namespace ft
 
 			if (m_alloc_size == m_element_number)
 			{
-				resize(m_element_number + 1);
+				resize(m_element_number + 1, val);
 				save_el_nbr = -1;
 			}
 			else
@@ -366,7 +370,7 @@ namespace ft
 
 			if (m_alloc_size < m_element_number + n)
 			{
-				resize(m_element_number + n);
+				resize(m_element_number + n, val);
 				save_el_nbr = -1;
 			}
 			else
@@ -400,10 +404,7 @@ namespace ft
 
 				for (InputIterator it = first; it  != last; it++)
 					el_nbr_to_insert++;
-				if (m_alloc_size < m_element_number + el_nbr_to_insert)
-					resize(m_element_number + el_nbr_to_insert);
-				else
-					m_element_number += el_nbr_to_insert;
+				resize(m_element_number + el_nbr_to_insert);
 				for (InputIterator it = first; it  != last; it++)
 				{
 					m_ptr[index] = *it;
