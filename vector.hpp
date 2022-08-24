@@ -172,10 +172,8 @@ namespace ft
 			{
 				int	new_allocate_size;
 
-				if (m_alloc_size != 0 && n < size() * 2 /* && n / m_alloc_size < 2 */)
+				if (m_alloc_size != 0 && n < size() * 2)
 					new_allocate_size = size() * 2;
-				// else if (m_alloc_size != 0 && n / m_alloc_size < 2)
-				// 	new_allocate_size = capacity() * 2;
 				else
 					new_allocate_size = n;
 
@@ -227,9 +225,6 @@ namespace ft
 			size_type save_el_nbr = m_element_number;
 			int	new_allocate_size;
 
-			/* if (m_alloc_size != 0 && n / m_alloc_size < 2 && n >= size() * 2)
-				new_allocate_size = m_alloc_size * 2;
-			else */
 			new_allocate_size = n;
 			T	*new_ptr = m_allocator.allocate(new_allocate_size);
 

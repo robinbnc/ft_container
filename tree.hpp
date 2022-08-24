@@ -12,7 +12,6 @@
 
 namespace ft
 {
-
 	enum rb_tree_color { _rb_red = false, _rb_black = true };
 
 	template<typename Val>
@@ -385,6 +384,8 @@ namespace ft
 				typename Compare, typename Alloc = std::allocator<Val> >
 		class Rb_tree
 		{
+
+			
 			public:
 				typedef std::size_t								size_type;
 
@@ -395,10 +396,12 @@ namespace ft
 
 				typedef std::bidirectional_iterator_tag			iterator_category;
 				typedef std::ptrdiff_t							difference_type;
+				typedef	Alloc									allocator_type;
 
 			protected:
 				typedef	struct	s_tree_node<Val>				tree_node;
-				typedef std::allocator<tree_node>				Node_allocator;
+				typedef typename    allocator_type::template rebind<tree_node>::other    Node_allocator;
+
 
 				Compare			m_comp;
 				Node_allocator	m_node_allocator;
@@ -689,6 +692,7 @@ namespace ft
 				Rb_tree(const Compare& comp, Alloc allocator)
 				: m_node_count(0)
 				{
+					m_node_allocator = allocator;
 					m_header = m_node_allocator.allocate(1);
 					m_node_allocator.construct(m_header, tree_node());
 					m_begin = m_node_allocator.allocate(1);
@@ -709,8 +713,8 @@ namespace ft
 
 				Rb_tree(const Rb_tree<Key, Val, Compare, Alloc> &copy)
 				: m_node_count(0)
-
 				{
+					m_node_allocator = copy.m_node_allocator;
 					m_header = m_node_allocator.allocate(1);
 					m_node_allocator.construct(m_header, tree_node());
 					m_begin = m_node_allocator.allocate(1);
