@@ -386,8 +386,6 @@ namespace ft
 		class Rb_tree
 		{
 			public:
-				typedef	struct	s_tree_node<Val>				tree_node;
-				typedef std::allocator<tree_node>				Node_allocator;
 				typedef std::size_t								size_type;
 
 				typedef ft::Rb_tree_iterator<Val> 				iterator;
@@ -399,6 +397,9 @@ namespace ft
 				typedef std::ptrdiff_t							difference_type;
 
 			protected:
+				typedef	struct	s_tree_node<Val>				tree_node;
+				typedef std::allocator<tree_node>				Node_allocator;
+
 				Compare			m_comp;
 				Node_allocator	m_node_allocator;
 				Alloc			m_val_allocator;
