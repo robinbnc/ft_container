@@ -25,5 +25,6 @@ This project includes re-implementation of the following tools :
 
 ## Demo
 
-Please use my tester: 
+Please use my tester:
+
 $./my_tester/test.sh
