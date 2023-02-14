@@ -22,3 +22,8 @@ This project includes re-implementation of the following tools :
 * lexicographical_compare
 * pair
 * make_pair
+
+## Demo
+
+Please use my tester: 
+$./my_tester/test.sh
